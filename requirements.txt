@@ -1,0 +1,5 @@
+gym>=0.26
+matplotlib>=3.6
+numpy>=1.23
+torch>=0.13
+torchvision>=0.13
