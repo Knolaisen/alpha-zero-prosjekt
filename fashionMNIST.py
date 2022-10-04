@@ -44,18 +44,24 @@ class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
         self.layer1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=10, kernel_size=3, padding=1),
-            nn.BatchNorm2d(10),
+            nn.Conv2d(in_channels=1, out_channels=16, kernel_size=3, padding=1),
+            nn.BatchNorm2d(16),
             nn.ReLU(),
             #nn.MaxPool2d(kernel_size=2, stride=2)
         )
         self.layer2 = nn.Sequential(
-            nn.Conv2d(in_channels=10, out_channels=28, kernel_size=3),
-            nn.BatchNorm2d(28),
+            nn.Conv2d(in_channels=16, out_channels=32, kernel_size=3),
+            nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(2)
         )
-        self.fc1 = nn.Linear(in_features=4732, out_features=10)
+        self.layer3 = nn.Sequential(
+            nn.Conv2d(in_channels=32, out_channels=8, kernel_size=3),
+            nn.BatchNorm2d(8),
+            nn.ReLU(),
+            nn.MaxPool2d(2)
+        )
+        self.fc1 = nn.Linear(in_features=5408, out_features=64)
         self.drop = nn.Dropout2d(0.25)
         self.flatten = nn.Flatten()
 
