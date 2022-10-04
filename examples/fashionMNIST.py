@@ -1,14 +1,12 @@
-from statistics import mode
 import torch
 from torch import nn
 from torch.utils.data import DataLoader
 from torchvision import datasets
 from torchvision.transforms import ToTensor
-import imp
 
 
 # Download training data from open datasets.
-training_data = datasets.FashionMNIST(
+train_set = datasets.FashionMNIST(
     root="data",
     train=True,
     download=True,
@@ -16,18 +14,20 @@ training_data = datasets.FashionMNIST(
 )
 
 # Download test data from open datasets.
-test_data = datasets.FashionMNIST(
+test_set = datasets.FashionMNIST(
     root="data",
     train=False,
     download=True,
     transform=ToTensor(),
 )
 
+learning_rate = 1e-3
 batch_size = 64
+epochs = 5
 
 # Create data loaders.
-train_dataloader = DataLoader(training_data, batch_size=batch_size)
-test_dataloader = DataLoader(test_data, batch_size=batch_size)
+train_dataloader = DataLoader(train_set, batch_size=batch_size)
+test_dataloader = DataLoader(test_set, batch_size=batch_size)
 
 for X, y in test_dataloader:
     print(f"Shape of X [N, C, H, W]: {X.shape}")
@@ -35,46 +35,46 @@ for X, y in test_dataloader:
     break
 
 
-x = torch.rand(64, 1, 28, 28)
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using {device} device")
 
-
+# Define model
 class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
+        
         self.layer1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=10, kernel_size=3, padding=1),
-            nn.BatchNorm2d(10),
+            nn.Conv2d(in_channels=1, out_channels=32, kernel_size=3, padding=1),
+            nn.BatchNorm2d(32),
             nn.ReLU(),
-            #nn.MaxPool2d(kernel_size=2, stride=2)
+            nn.MaxPool2d(kernel_size=2, stride=2)
         )
+        
         self.layer2 = nn.Sequential(
-            nn.Conv2d(in_channels=10, out_channels=28, kernel_size=3),
-            nn.BatchNorm2d(28),
+            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=3),
+            nn.BatchNorm2d(64),
             nn.ReLU(),
             nn.MaxPool2d(2)
         )
-        self.fc1 = nn.Linear(in_features=4732, out_features=10)
-        self.drop = nn.Dropout2d(0.25)
-        self.flatten = nn.Flatten()
-
+        
+        self.fc1 = nn.Linear(in_features=64*6*6, out_features=600)
+        self.drop = nn.Dropout(0.25)
+        self.fc2 = nn.Linear(in_features=600, out_features=10)
+        
     def forward(self, x):
         out = self.layer1(x)
         out = self.layer2(out)
-        out = self.flatten(out)
+        out = out.view(out.size(0), -1)
         out = self.fc1(out)
         out = self.drop(out)
-
+        out = self.fc2(out)
         
         return out
 
 model = NeuralNetwork().to(device)
-print(model)
-print(sum(param.numel() for param in model.parameters()))
-
 loss_fn = nn.CrossEntropyLoss()
-optimizer = torch.optim.SGD(model.parameters(), lr=1e-3)
+optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+print(model)
 
 def train(dataloader, model, loss_fn, optimizer):
     size = len(dataloader.dataset)
@@ -109,41 +109,39 @@ def test(dataloader, model, loss_fn):
     test_loss /= num_batches
     correct /= size
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
-
-epochs1 = 5
-epochs2 = 5
-
-for t in range(epochs1):
+    
+for t in range(epochs):
     print(f"Epoch {t+1}\n-------------------------------")
     train(train_dataloader, model, loss_fn, optimizer)
     test(test_dataloader, model, loss_fn)
-
-
-
-optimizer2 = torch.optim.SGD(model.parameters(), lr=5e-4)
-
-for t in range(epochs2):
-    print(f"Epoch {t+1}\n-------------------------------")
-    train(train_dataloader, model, loss_fn, optimizer2)
-    test(test_dataloader, model, loss_fn)
 print("Done!")
 
-classes = [
-    "T-shirt/top",
-    "Trouser",
-    "Pullover",
-    "Dress",
-    "Coat",
-    "Sandal",
-    "Shirt",
-    "Sneaker",
-    "Bag",
-    "Ankle boot",
-]
+# Save model
+torch.save(model.state_dict(), "model.pth")
+print("Saved PyTorch Model State to model.pth")
 
-model.eval()
-x, y = test_data[0][0], test_data[0][1]
-with torch.no_grad():
-    pred = model(x.unsqueeze(0))
-    predicted, actual = classes[pred[0].argmax(0)], classes[y]
-    print(f'Predicted: "{predicted}", Actual: "{actual}"')
+# Load model
+# model = NeuralNetwork()
+# model.load_state_dict(torch.load("model.pth"))
+
+
+# Evaluate
+# classes = [
+#     "T-shirt/top",
+#     "Trouser",
+#     "Pullover",
+#     "Dress",
+#     "Coat",
+#     "Sandal",
+#     "Shirt",
+#     "Sneaker",
+#     "Bag",
+#     "Ankle boot",
+# ]
+
+# model.eval()
+# x, y = test_data[0][0], test_data[0][1]
+# with torch.no_grad():
+#     pred = model(x)
+#     predicted, actual = classes[pred[0].argmax(0)], classes[y]
+#     print(f'Predicted: "{predicted}", Actual: "{actual}"')
