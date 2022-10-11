@@ -10,12 +10,11 @@ ai = MonteCarlo(2)
 display.start(board.fen())
 print(board)
 print(board.legal_moves)
-while input() != " ":
+while True:
   if board.is_game_over():
     board.reset()
   #print()
   action = ai.Search(board)
-  print(action)
   board.push(action)
   display.start(board.fen())
 
