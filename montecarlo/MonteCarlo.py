@@ -1,4 +1,3 @@
-import chess
 from math import log,sqrt
 import math
 import random
@@ -29,10 +28,16 @@ class MonteCarlo():
             Currdepth += 1
         
         value, move = -math.inf, None
+        top_moves = []
         for i in node.children:
             if i.v > value:
+                top_moves.clear()
                 value = i.v
-                move = i.get_move()
+                top_moves.append(i.get_move())
+            elif i.v == value:
+                top_moves.append(i.get_move())
+        
+        move = random.choice(top_moves)
         return move
     
     #node.v = total utility of node
@@ -42,11 +47,17 @@ class MonteCarlo():
     def Select(self, node):
         max_ucb = -math.inf
         select_child = None
+        best_children = []
         for i in node.children:
             current_ucb = self.UCB1(i)
             if current_ucb > max_ucb:
+                best_children.clear()
                 max_ucb = current_ucb
-                select_child = i
+                best_children.append(i)
+            elif current_ucb == max_ucb:
+                best_children.append(i)
+        
+        select_child = random.choice(best_children)
         return select_child
     
     def Expand(self, node,depth):

@@ -5,7 +5,7 @@ class Node():
     
     def __init__(self, board, depth=0, parent=None) -> None:
         self.depth = depth
-        self.depth_limit = 3
+        self.depth_limit = 2
         self.state = board
         self.children = self.make_children(depth)
         self.P = parent

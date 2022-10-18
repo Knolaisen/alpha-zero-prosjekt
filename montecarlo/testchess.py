@@ -1,4 +1,3 @@
-import random
 import chess
 from chessboard import display
 from MonteCarlo import MonteCarlo
@@ -6,16 +5,17 @@ from MonteCarlo import MonteCarlo
 
 
 board = chess.Board()
-ai = MonteCarlo(2)
+ai = MonteCarlo(15)
 display.start(board.fen())
-print(board)
-print(board.legal_moves)
+# print(board)
+# print(board.legal_moves)
 while True:
   if board.is_game_over():
     board.reset()
   #print()
   action = ai.Search(board)
-  board.push(action)
+  print(action)
+  board.push(action)  # type: ignore
   display.start(board.fen())
 
   #print(action)
