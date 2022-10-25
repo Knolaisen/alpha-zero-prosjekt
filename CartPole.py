@@ -76,12 +76,24 @@ epsilon = 0.90
 
 model = NeuralNetwork().to(device)
 state = discretize(observation)
-action = policy(state)
-print(f'State: {state}\n Action: {action}')
 
+episode = 0
+while episode < 1000:
+    action = policy(state)
+    observation, reward, terminated, truncated, info = env.step(action)
+    memory_buffer = [state, action, reward, discretize(observation)]
+    print(memory_buffer)
 
-
-# Create a neural network that takes in observations and outputs two action nodes - probability of chosing to go left & probability of chosing to go right.
-# The action (neural network output) with largest probability should always be chosen given greedy policy, while the oposite action should be chosen given exploration step
-# Google "epsilon greedy algorithm reinforcement learning" to learn how to update epsilon as the probability for either chosing to exploit or to explore
+    episode_reward += reward
+    
+    
+    if terminated or truncated:
+        observation, info = env.reset()
+        state = discretize(observation)
+        print('episode_reward:', episode_reward,'\nEpsilon', epsilon, '\nepisode:', episode, '\n')
+        epsilon = max(1-episode_reward/150,0.01)
+        episode_rewards.append(episode_reward)
+        episode_reward = 0
+        episode += 1
+env.close()
 
