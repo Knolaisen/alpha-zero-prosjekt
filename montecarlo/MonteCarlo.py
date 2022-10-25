@@ -8,6 +8,7 @@ class MonteCarlo():
     
     def __init__(self, depth) -> None:
         self.depth = depth
+        self.stateDict = {}
         
     def UCB1(self, node):
         if(node.N == 0):
@@ -18,7 +19,13 @@ class MonteCarlo():
         
     def Search(self, state):
         Currdepth = 0
-        node = Node(state)
+        if hash(state.fen()[:-4]) in self.stateDict:
+            node = self.stateDict[hash(state.fen()[:-4])]
+            print("Been here before!")
+            print(node.state.fen())
+        else:
+            node = Node(self.stateDict, state)
+            self.stateDict[node] = node
 
         while Currdepth <= self.depth:
             leaf = self.Select(node)
@@ -30,6 +37,7 @@ class MonteCarlo():
         value, move = -math.inf, None
         top_moves = []
         for i in node.children:
+            self.stateDict[i] = i
             if i.v > value:
                 top_moves.clear()
                 value = i.v
