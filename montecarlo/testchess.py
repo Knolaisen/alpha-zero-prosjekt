@@ -5,7 +5,7 @@ from MonteCarlo import MonteCarlo
 
 
 board = chess.Board()
-ai = MonteCarlo(15)
+ai = MonteCarlo(50)
 display.start(board.fen())
 # print(board)
 # print(board.legal_moves)
@@ -14,11 +14,10 @@ while True:
     board.reset()
   #print()
   action = ai.Search(board)
-  print(action)
+  print(f"{board.fullmove_number}. {action}")
   board.push(action)  # type: ignore
   display.start(board.fen())
 
-  #print(action)
 
 print(board.fullmove_number)
 print(board.result())
