@@ -1,8 +1,6 @@
 import os
 from operator import itemgetter
 
-from gym_connect_four.envs.connect_four_env import RandomPlayer
-
 # Comment next line to run on GPU. With this configuration, it looks to run faster on CPU i7-8650U
 os.environ['CUDA_VISIBLE_D5EVICES'] = '-1'
 
@@ -12,9 +10,9 @@ import warnings
 import gym
 from keras.layers import Dense, Flatten
 from keras.models import Sequential
-from keras.optimizers import adam_v2
+from keras.optimizers import Adam
 
-from gym_connect_four import ConnectFourEnv, Player, ResultType, SavedPlayer
+from gym_connect_four import ConnectFourEnv, RandomPlayer, Player, ResultType
 
 ENV_NAME = "ConnectFour-v0"
 TRAIN_EPISODES = 100000
@@ -194,7 +192,7 @@ class DQNSolver:
         self.model.add(Dense(obs_space_card * 2, activation="relu"))
         self.model.add(Dense(obs_space_card * 2, activation="relu"))
         self.model.add(Dense(self.action_space, activation="linear"))
-        self.model.compile(loss="mse", optimizer=adam_v2(lr=self.LEARNING_RATE))
+        self.model.compile(loss="mse", optimizer=Adam(lr=self.LEARNING_RATE))
 
     def remember(self, state, action, reward, next_state, done):
         self.memory.append((state, action, reward, next_state, done))
