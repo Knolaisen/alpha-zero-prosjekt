@@ -1,14 +1,16 @@
 from math import log,sqrt
 import math
 import random
+from select import select
 from Node import Node
+from collections import defaultdict
 
 
 class MonteCarlo():
     
     def __init__(self, depth) -> None:
         self.depth = depth
-        self.stateDict = {}
+        self.stateDict = defaultdict(list)
         
     def UCB1(self, node):
         if(node.N == 0):
@@ -19,13 +21,10 @@ class MonteCarlo():
         
     def Search(self, state):
         Currdepth = 0
-        if hash(state.fen()[:-4]) in self.stateDict:
-            node = self.stateDict[hash(state.fen()[:-4])]
-            print("Been here before!")
-            print(node.state.fen())
-        else:
-            node = Node(self.stateDict, state)
-            self.stateDict[node] = node
+        node = Node(state)
+        if node not in self.stateDict:
+            self.stateDict[node] = []
+            node.make_children(self.stateDict)
 
         while Currdepth <= self.depth:
             leaf = self.Select(node)
@@ -36,8 +35,7 @@ class MonteCarlo():
         
         value, move = -math.inf, None
         top_moves = []
-        for i in node.children:
-            self.stateDict[i] = i
+        for i in self.stateDict[node]:
             if i.v > value:
                 top_moves.clear()
                 value = i.v
@@ -56,7 +54,7 @@ class MonteCarlo():
         max_ucb = -math.inf
         select_child = None
         best_children = []
-        for i in node.children:
+        for i in self.stateDict[node]:
             current_ucb = self.UCB1(i)
             if current_ucb > max_ucb:
                 best_children.clear()
@@ -64,16 +62,19 @@ class MonteCarlo():
                 best_children.append(i)
             elif current_ucb == max_ucb:
                 best_children.append(i)
-        
-        select_child = random.choice(best_children)
+        if best_children:
+            select_child = random.choice(best_children)
+        else:
+            select_child = random.choice(self.stateDict[node])
         return select_child
     
     def Expand(self, node,depth):
-        if not node.children or depth>self.depth:
+        node.make_children(self.stateDict)
+        if len(self.stateDict[node])==0 or depth>self.depth:
             return node
         max_ucb = -math.inf
         select_child = None
-        for i in node.children:
+        for i in self.stateDict[node]:
             curr_ucb = self.UCB1(i)
             if curr_ucb > max_ucb:
                 max_ucb = curr_ucb
@@ -81,8 +82,8 @@ class MonteCarlo():
         return self.Expand(select_child, depth+1)
     
     def Simulate(self, node):
-        if not node.children:
-            return 0.5
+        if(node not in self.stateDict):
+            return
         if(node.state.is_game_over()):
             if(node.state.result()=='1-0'):
                 return (1)
@@ -90,7 +91,10 @@ class MonteCarlo():
                 return(-1)
             return 0.5
         #print(node.children)
-        random_child = random.choice(node.children)
+        try:
+            random_child = random.choice(self.stateDict[node])
+        except Exception:
+            print(self.stateDict[node])
         return self.Simulate(random_child)
 
     

@@ -5,7 +5,7 @@ from MonteCarlo import MonteCarlo
 
 
 board = chess.Board()
-ai = MonteCarlo(20)
+ai = MonteCarlo(10)
 display.start(board.fen())
 # print(board)
 # print(board.legal_moves)
