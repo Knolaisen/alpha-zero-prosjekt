@@ -43,29 +43,38 @@ print(f"Using {device} device")
 class NeuralNetwork(nn.Module):
     def __init__(self):
         super(NeuralNetwork, self).__init__()
-        self.layer1 = nn.Sequential(
-            nn.Conv2d(in_channels=1, out_channels=10, kernel_size=3, padding=1),
-            nn.BatchNorm2d(10),
+        self.layerH = nn.Sequential(
+            nn.Conv2d(in_channels=1, out_channels=6, kernel_size=[1,7]),
+            nn.BatchNorm2d(6),
             nn.ReLU(),
-            #nn.MaxPool2d(kernel_size=2, stride=2)
+    #        nn.MaxPool2d(kernel_size=2, stride=2)
         )
-        self.layer2 = nn.Sequential(
-            nn.Conv2d(in_channels=10, out_channels=28, kernel_size=3),
-            nn.BatchNorm2d(28),
+
+        self.layerV = nn.Sequential(
+            nn.Conv2d(in_channels=6, out_channels=7, kernel_size=[6,1]),
+            nn.BatchNorm2d(7),
             nn.ReLU(),
-            nn.MaxPool2d(2)
+    #        nn.MaxPool2d(kernel_size=2, stride=2)
         )
-        self.fc1 = nn.Linear(in_features=4732, out_features=10)
-        self.drop = nn.Dropout2d(0.25)
+
+        self.layer3x3 = nn.Sequential(
+            nn.Conv2d(in_channels=7, out_channels=16, kernel_size=3),
+            nn.BatchNorm2d(16),
+            nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2)
+        )
+
         self.flatten = nn.Flatten()
+        self.fc1 = nn.Linear(in_features=1600, out_features=64)
+    #    self.drop = nn.Dropout2d(0.25)
 
     def forward(self, x):
-        out = self.layer1(x)
-        out = self.layer2(out)
+        out = self.layerH(x)
+        out = self.layerV(out)
+        out = self.layer3x3(out)
         out = self.flatten(out)
         out = self.fc1(out)
-        out = self.drop(out)
-
+    #    out = self.drop(out)
         
         return out
 
@@ -110,8 +119,8 @@ def test(dataloader, model, loss_fn):
     correct /= size
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
 
-epochs1 = 5
-epochs2 = 5
+epochs1 = 1
+epochs2 = 1
 
 for t in range(epochs1):
     print(f"Epoch {t+1}\n-------------------------------")
