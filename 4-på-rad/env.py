@@ -50,6 +50,10 @@ class ConnectFour():
     def get_available_moves(self) -> list[int]:
         return [column for column in range(self.shape[1]) if self._get_next_open_row(column) is not None]
 
+    def get_illegal_moves(self) -> list[int]:
+        return [column for column in range(self.shape[1]) if self._get_next_open_row(column) is None]
+        
+
     def is_win_state(self):
         # Test rows
         for i in range(self.shape[0]):
