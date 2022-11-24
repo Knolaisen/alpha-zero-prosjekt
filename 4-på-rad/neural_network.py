@@ -73,14 +73,11 @@ class NeuralNetwork(nn.Module):
 
 
 model = NeuralNetwork().to(device=device)
-#print(model)
-# print(sum(param.numel() for param in model.parameters()))
 
 game = ConnectFour()
 state = game.get_board()
 
-nn = NeuralNetwork()
-policy, value = nn.forward(state)
+policy, value = model.forward(state)
 #print(forward)
 
 print(f'\n\nPolicy: {policy}\n Value:{value}')
