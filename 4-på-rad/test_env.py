@@ -1,4 +1,3 @@
-import numpy as np
 from env import ConnectFour
 
 game = ConnectFour()
