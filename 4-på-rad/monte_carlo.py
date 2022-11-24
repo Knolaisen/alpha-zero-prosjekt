@@ -1,20 +1,30 @@
 import neural_network as NN
 import env
 
-# device = "cuda" if torch.cuda.is_available() else "cpu"
-device = "cpu"
-print(f"Using {device} device")
+game = env.ConnectFour()
 
 class MonteCarlo():
 
 	def __init__(self) -> None:
-		self.board = env.ConnectFour.get_board()	
+		self.board = game.get_board()	
 
 	# main function for the Monte Carlo Tree Search
 	def monte_carlo_tree_search(root):
 
-#		policy, value = NN.forward(self.board)
-#		for possible_action in policy:
+		policy, value = NN.forward(self.board)
+		for i in range(policy): # Iterate through all possible moves
+			
+			# Nullerer verdien til forbudte valg
+			illegal_moves = game.get_illegal_moves()
+			if illegal_moves != 0:
+				for i in illegal_moves:
+					policy[i] = 0
+
+				# Normaliserer policy
+				norm = np.linalg.norm(policy)
+				policy = policy/norm
+		
+		
 			
 
 		while resources_left(time, computational power):
