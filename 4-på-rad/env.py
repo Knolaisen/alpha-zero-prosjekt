@@ -52,7 +52,6 @@ class ConnectFour():
 
     def get_illegal_moves(self) -> list[int]:
         return [column for column in range(self.shape[1]) if self._get_next_open_row(column) is None]
-        
 
     def is_win_state(self):
         # Test rows
@@ -97,3 +96,14 @@ class ConnectFour():
 
     def is_game_over(self) -> bool:
         return len(self.get_available_moves()) == 0 or self.is_win_state()[0]
+
+    def trim_and_normalize(self, array):
+        # Replacec illegal moves with value 0
+        illegal_moves = self.get_illegal_moves()
+        legal_moves = self.get_available_moves()
+        if illegal_moves:
+            for i in illegal_moves:
+                array[i] = 0
+            array = array/np.linalg.norm(array)
+            return array # Return normalized array (NB!: does not sum to 1 it seems)
+        return array
