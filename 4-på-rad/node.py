@@ -1,5 +1,1 @@
-import numpy as np
-
-node_dictionary = {
-
-}
+node_dictionary = {}
