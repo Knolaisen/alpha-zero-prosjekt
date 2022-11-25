@@ -5,7 +5,6 @@ from node import node_dictionary
 
 game = env.ConnectFour()
 
-
 def trim_and_normalize(array):
 	# Replacec illegal moves with value 0
 	illegal_moves = game.get_illegal_moves()
