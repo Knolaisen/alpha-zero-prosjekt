@@ -15,10 +15,11 @@ def select(policy): #TODO include UBC & value and make sure it's correctly set u
 	return np.argmax(policy)
 
 # Simulates game from given board state and returns updated empirical mean value for board state after finished simulation
-def simulate(board, player) -> float: 
+def simulate(board, action, player) -> float: 
 
     simulation_game = env.ConnectFour()
     simulation_game.board = board
+    simulation_game.move(column=action, player=player)
     #print(f'\nSimulating game starting with player {player} with clean board')
     
     id_buffer = [] # keep track on board states visited
@@ -58,8 +59,9 @@ def test():
     player = 1
 
     while number_of_games > 0:
-        board = np.zeros((6,7)) 
-        simulate(board, player)
+        board = np.zeros((6,7))
+        first_action = np.random.randint(0,6)
+        simulate(board=board, action=first_action, player=player)
         number_of_games -= 1
         player *= -1
 
