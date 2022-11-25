@@ -1,8 +1,16 @@
 import env
 import numpy as np
 from neural_network import model
+import pickle
 
-node_dictionary = {}
+# Dictionary storing all visited board states and their repective empirical value and visit count.
+filename = 'nodes'
+try:
+	infile = open(filename, 'rb')
+	node_dictionary = pickle.load(infile)
+	infile.close()
+except (OSError, IOError) as e:
+	node_dictionary = {}
 
 def simulate(board, action, player) -> float:
 	
@@ -33,8 +41,8 @@ def simulate(board, action, player) -> float:
 			else:
 				node_dictionary[id] = [0,1] # Making a dictionary entry starting with 1 number of visits
 			
-		policy = np.random.rand(7)
-		#policy, value = model.forward(simulation_game.board)
+		#policy = np.random.rand(7)
+		policy, value = model.forward(simulation_game.board)
 		policy = simulation_game.trim_and_normalize(policy)
 		action = select(policy)
 		simulation_game.move(action, player)
@@ -80,11 +88,13 @@ class MonteCarlo():
 				policy_target.append(empirical_mean_value)
 			else:
 				policy_target.append(0)
-		#print(f'Search results: {search_result}')
+		print(f'Search results: {search_result}')
 		best_move = max(search_result, key=search_result.get)
 		
-		policy_target = np.array(policy_target)
-		replay_buffer = replay_buffer, policy_target
+		value_target = np.array(np.sum(policy_target)/live_game.shape[1])
+		policy_target = np.array(policy_target)/np.linalg.norm(policy_target)
+		replay_buffer = replay_buffer, policy_target, value_target
+		print(replay_buffer)
 		#print(policy_target)
 
 		return best_move
@@ -100,11 +110,24 @@ class MonteCarlo():
 			id = sequence[i]
 			dict[id][0] += 1
 
+# ---- test run section below ---- #
+player = 1
+live_game = env.ConnectFour()
+mcts = MonteCarlo(live_game.get_board(), player=player)
+
+while not live_game.is_game_over():
+	beset_move = mcts.search()
+	mcts.play_move(beset_move)
+reward = live_game.is_win_state()[1]
+print(f'\nThe winner is {reward} with board state:\n{live_game.board}')
+
+'''
 history = []
 
-number_of_games = 1000
+number_of_games = 100
+n = number_of_games
 game_counter = 0
-while number_of_games > 1:
+while number_of_games > 0:
 	player = 1
 	live_game = env.ConnectFour()
 	mcts = MonteCarlo(live_game.get_board(), player=player)
@@ -122,9 +145,9 @@ while number_of_games > 1:
 	player *= -1
 	number_of_games -= 1
 	game_counter += 1
-	completion = game_counter/1000
+	completion = game_counter/n
 	print('Progress:', round(completion*100),'%')
-	if game_counter > 990:
+	if game_counter > n-3:
 		print(live_game.board)
 
 x = np.linspace(0, len(history), len(history))
@@ -133,3 +156,8 @@ y = history
 import matplotlib.pyplot as plt
 plt.plot(x, y)
 plt.savefig('simple plot for learning rate')
+'''
+
+outfile = open(filename, 'wb')
+pickle.dump(node_dictionary, outfile)
+outfile.close
