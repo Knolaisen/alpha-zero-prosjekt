@@ -2,7 +2,6 @@ import torch
 from torch import nn
 from env import ConnectFour
 
-
 # Eksempelkode som kjører på FasionMNIST dataset:
 # URL: https://github.com/Knolaisen/alpha-zero-prosjekt/blob/Per-Ivar/examples/fashionMNIST.py
 
@@ -53,10 +52,10 @@ class NeuralNetwork(nn.Module):
             nn.Linear(in_features=64, out_features=32, device=device),
             nn.ReLU(),
             nn.Linear(in_features=32, out_features=1, device=device),
-            nn.Sigmoid()
+            nn.Tanh()
         )
 
-    def forward(self, x):
+    def forward(self, x, tensor=False):
         out = torch.from_numpy(x).to(device=device, dtype=torch.float)
         shape = 1, *game.shape
         out = out.view(shape)
@@ -66,11 +65,14 @@ class NeuralNetwork(nn.Module):
         out = self.layer_4x4(out)
         out = self.flatten(out)
 
-        policy = self.policy(out).detach().cpu().numpy()
-        value = self.value(out).detach().cpu().numpy()
+        policy = self.policy(out)
+        value = self.value(out)        
 
-        return policy, value
+        if tensor: # returns tensor
+            return policy, value
 
+        # else returns numpy array
+        return policy.detach().cpu().numpy(), value.detach().cpu().numpy()
 
 model = NeuralNetwork().to(device=device)
 game = ConnectFour()

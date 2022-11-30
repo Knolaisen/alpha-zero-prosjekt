@@ -4,13 +4,22 @@ from neural_network import model
 import pickle
 
 # Dictionary storing all visited board states and their repective empirical value and visit count.
-filename = 'nodes'
+filename_nodes = 'nodes'
 try:
-	infile = open(filename, 'rb')
-	node_dictionary = pickle.load(infile)
-	infile.close()
+	infile_nodes = open(filename_nodes, 'rb')
+	node_dictionary = pickle.load(infile_nodes)
+	infile_nodes.close()
 except (OSError, IOError) as e:
 	node_dictionary = {}
+
+# Array for storing all training data: board state, policy target and value target respectively 
+filename_training = 'training_data'
+try:
+	infile_training = open(filename_training, 'rb')
+	training_data = pickle.load(infile_training)
+	infile_training.close()
+except (OSError, IOError) as e:
+	training_data = np.array([], dtype='object')
 
 def simulate(board, action, player) -> float:
 	
@@ -73,91 +82,103 @@ class MonteCarlo():
 	def search(self) -> int:
 		#print('\nStarting search at the following board state \n\n', self.board)
 		 # fetch policy and value from neural network given board state
-		policy, value = model.forward(self.board)
-		replay_buffer = self.board, policy, value
+		raw_policy, raw_value = model.forward(self.board)
+		policy = live_game.trim_and_normalize(raw_policy)
 		
-		policy = live_game.trim_and_normalize(policy)
-		
-		policy_target = []
+		policy_target = np.array([])
 		search_result = {}
 		for i in range(len(policy)): # Iterate through all possible moves
 			if policy[i]:
 				column = i
 				empirical_mean_value = simulate(board=np.array(self.board), action=column, player=self.player)
 				search_result[i] = empirical_mean_value
-				policy_target.append(empirical_mean_value)
+				policy_target = np.append(policy_target, values=empirical_mean_value)
 			else:
-				policy_target.append(0)
-		print(f'Search results: {search_result}')
+				policy_target = np.append(policy_target, values=0)
+		#print(f'Search results: {search_result}')
 		best_move = max(search_result, key=search_result.get)
 		
-		value_target = np.array(np.sum(policy_target)/live_game.shape[1])
-		policy_target = np.array(policy_target)/np.linalg.norm(policy_target)
-		replay_buffer = replay_buffer, policy_target, value_target
-		print(replay_buffer)
-		#print(policy_target)
+		value_target = np.array([np.sum(policy_target)/live_game.shape[1]], dtype='float32')
+		policy_target = policy_target/np.linalg.norm(policy_target)
+
+		#print('raw_value: ', raw_value)
+		#print('target_value:', value_target)
+
+		replay_buffer = self.board, policy_target, value_target
+		replay_buffer = np.array([replay_buffer], dtype='object')
+		
+		global training_data
+		training_data = np.append(training_data, replay_buffer)
 
 		return best_move
 
-	def play_move(self, action):
+	def play_move(self, action) -> None:
 		#print(f'Making move {action} as player {self.player}')
 		live_game.move(column=action, player=self.player)
 		self.player *= -1
 		#print('Resulting board state:', self.board)
 
-	def _backpropagate(self, sequence, dict):
+	def _backpropagate(self, sequence, dict) -> None:
 		for i in range(len(sequence)-1, -1, -2):
 			id = sequence[i]
 			dict[id][0] += 1
 
-# ---- test run section below ---- #
-player = 1
-live_game = env.ConnectFour()
-mcts = MonteCarlo(live_game.get_board(), player=player)
+def show_training_data():
+	columns = 3
+	global training_data
+	rows = int(len(training_data)/columns)
+	training_data = np.reshape(training_data, newshape=(rows, columns))
 
-while not live_game.is_game_over():
-	beset_move = mcts.search()
-	mcts.play_move(beset_move)
-reward = live_game.is_win_state()[1]
-print(f'\nThe winner is {reward} with board state:\n{live_game.board}')
+	print('\nTraining data:\n')
+	for i in range(3):
+		print('Row',i, ':', training_data[i])
+	for i in range(len(training_data)-1,len(training_data)-3, -1):
+		print('Row',i, ':', training_data[i])
 
-'''
-history = []
+def save_node_dictionary():
+	print('Saving node dictionary at the length of', len(node_dictionary))
+	outfile_nodes = open(filename_nodes, 'wb')
+	pickle.dump(node_dictionary, outfile_nodes)
+	outfile_nodes.close()
 
-number_of_games = 100
-n = number_of_games
-game_counter = 0
-while number_of_games > 0:
-	player = 1
+def save_training_data():
+	print('Saving training data at the shape of', np.shape(training_data))
+	outfile_games = open(filename_training, 'wb')
+	pickle.dump(training_data, outfile_games)
+	outfile_games.close()
+
+def play_one_game(player):
+	player = player
+	global live_game
 	live_game = env.ConnectFour()
 	mcts = MonteCarlo(live_game.get_board(), player=player)
-	number_of_moves = 0
 
 	while not live_game.is_game_over():
-		#print('Running live game')
-		best_move = mcts.search()
-		mcts.play_move(best_move)
-		number_of_moves += 1
+		beset_move = mcts.search()
+		mcts.play_move(beset_move)
 	reward = live_game.is_win_state()[1]
-	history.append(number_of_moves)
-	#print(f'The winner is {reward} after {number_of_moves} moves')
-	
-	player *= -1
-	number_of_games -= 1
-	game_counter += 1
-	completion = game_counter/n
-	print('Progress:', round(completion*100),'%')
-	if game_counter > n-3:
-		print(live_game.board)
+	print(f'\nThe winner is {reward} with board state:\n{live_game.board}')
 
-x = np.linspace(0, len(history), len(history))
-y = history
+def play_multiple_games(number_of_games):
+	player = 1
+	number_of_games = number_of_games
+	n = number_of_games
+	game_counter = 0
+	while number_of_games > 0:
+		play_one_game(player=player)
+		player *= -1
+		number_of_games -= 1
+		game_counter += 1
+		completion = game_counter/n
+		print('Progress:', round(completion*100),'%')
+		if game_counter > n-3:
+			print(live_game.board)
 
-import matplotlib.pyplot as plt
-plt.plot(x, y)
-plt.savefig('simple plot for learning rate')
-'''
+# ---- test run section below ---- #
 
-outfile = open(filename, 'wb')
-pickle.dump(node_dictionary, outfile)
-outfile.close
+play_multiple_games(number_of_games= 2)
+
+show_training_data()
+
+save_node_dictionary()
+save_training_data()
