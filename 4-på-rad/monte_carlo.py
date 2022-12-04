@@ -279,7 +279,7 @@ def reset_training_data(filename='training_data'): # TODO FIX: reset funksjonen 
 def play_one_game(game, method, show_result=False):
 	
 	while not game.is_game_over():
-		method.search_and_play(game=game)
+		method.search_and_play()
 	if show_result:
 		reward = game.is_win_state()[1]
 		print(f'\nThe winner is {reward} with board state:\n{game.get_board()}')
