@@ -29,11 +29,11 @@ class NeuralNetwork(nn.Module):
 
         self.layer_4x4 = nn.Sequential(
             nn.Conv2d(in_channels=1, out_channels=32, kernel_size=4, device=device),
-            nn.BatchNorm1d(3, device=device),
+            #nn.BatchNorm1d(3, device=device),
             nn.ReLU(),
             # nn.MaxPool2d(kernel_size=2, stride=2)
-        )
-
+        )   
+  
         self.flatten = nn.Flatten(0,-1)
 
         self.policy = nn.Sequential(
@@ -55,7 +55,7 @@ class NeuralNetwork(nn.Module):
             nn.Tanh()
         )
 
-    def forward(self, x, tensor=False):
+    def forward(self, x, tensor=False, only_policy=False):
         out = torch.from_numpy(x).to(device=device, dtype=torch.float)
         shape = 1, *game.shape
         out = out.view(shape)
@@ -66,6 +66,8 @@ class NeuralNetwork(nn.Module):
         out = self.flatten(out)
 
         policy = self.policy(out)
+        if only_policy:
+            return policy.detach().cpu().numpy()
         value = self.value(out)        
 
         if tensor: # returns tensor
@@ -76,6 +78,7 @@ class NeuralNetwork(nn.Module):
 
 model = NeuralNetwork().to(device=device)
 game = ConnectFour()
+
 
 #state = game.get_board()
 
