@@ -2,9 +2,10 @@ import numpy as np
 
 
 class ConnectFour():
-    def __init__(self, shape: tuple = (6, 7)):
+    def __init__(self, shape: tuple = (6, 7), counter=0):
         self.shape = shape
         self.board = np.zeros(shape)
+        self.counter = counter
 
     def get_board(self) -> np.array:
         return self.board
@@ -30,14 +31,14 @@ class ConnectFour():
         else:
             return True
 
-    def move(self, column: int, player: int) -> None:
-        if player is None or column is None:
+    def move(self, column: int) -> None:
+        if column is None:
             raise Exception(
-                "Missing required arguments (requires column and player)")
+                "Missing required arguments (requires column)")
 
         # Validate player
-        if not (player == -1 or player == 1):
-            raise Exception("Player must be -1 or 1")
+        #if not (player == -1 or player == 1):
+        #    raise Exception("Player must be -1 or 1")
 
         # Check if legal move
         row = self._get_next_open_row(column)
@@ -45,7 +46,11 @@ class ConnectFour():
             raise Exception(f"Illegal move. Column {column} is full")
 
         # Do move
-        self.board[row][column] = player
+        self.board[row][column] = 1
+        self.counter += 1
+    
+    def switch_sides(self):
+        self.board[(self.board > 0) | (self.board < 0)] *= -1
 
     def get_available_moves(self) -> list[int]:
         return [column for column in range(self.shape[1]) if self._get_next_open_row(column) is not None]
@@ -98,12 +103,22 @@ class ConnectFour():
         return len(self.get_available_moves()) == 0 or self.is_win_state()[0]
 
     def trim_and_normalize(self, array):
-        # Replacec illegal moves with value 0
+        
         illegal_moves = self.get_illegal_moves()
         legal_moves = self.get_available_moves()
+
+        # Replace small values with zero to stabilize norm function.  
+        # This is an attempt to fix. "RuntimeWarning: divide by zero encountered in divide" and "RuntimeWarning: invalid value encountered in divide"
+        array[array < 1e-5] = 0 
+
         if illegal_moves:
-            for i in illegal_moves:
+            for i in illegal_moves: # Replacec illegal moves with value 0
                 array[i] = 0
+            if (array == 0).all(): # Enter if array is completely empty and cannot be normalized.
+                # Fills empty array with available moves to prevent "RuntimeWarning: divide by zero encountered in divide" from killing the neural network.
+                for i in legal_moves:
+                    array[i] = 1
             array = array/np.linalg.norm(array)
             return array # Return normalized array (NB!: does not sum to 1 it seems)
+            
         return array
