@@ -1,11 +1,13 @@
 import numpy as np
 
-
 class ConnectFour():
-    def __init__(self, shape: tuple = (6, 7), counter=0):
+    def __init__(self, shape: tuple = (6, 7), board=np.zeros((6,7)), counter=0, debug=False):
         self.shape = shape
-        self.board = np.zeros(shape)
+        self.board = board
         self.counter = counter
+
+        if debug:
+            print(f'Initializing game at board state:\n{self.board}')
 
     def get_board(self) -> np.array:
         return self.board
@@ -31,7 +33,19 @@ class ConnectFour():
         else:
             return True
 
-    def move(self, column: int) -> None:
+    def move(self, column: int, interactive: bool=False) -> None:
+        
+        if interactive: # Option for manually playing an action
+            print(f'\nYou are now playing connect-4')
+            print(f'\nCurrent board state:\n {self.board()}')
+            available_moves = self.get_available_moves()
+            best_move = int(input(f'\nChoose your column! Available moves: {available_moves}\n>'))
+            while best_move not in available_moves:
+                print(f'You attempted to play on column {best_move}, however this move is not valid')
+                best_move = int(input(f'\nChoose your column! Available moves: {available_moves}\n> '))
+            self.move(best_move)
+            return None
+            
         if column is None:
             raise Exception(
                 "Missing required arguments (requires column)")
@@ -101,6 +115,10 @@ class ConnectFour():
 
     def is_game_over(self) -> bool:
         return len(self.get_available_moves()) == 0 or self.is_win_state()[0]
+    
+    def reset(self) -> None:
+        self.board = np.zeros((6,7))
+        self.counter = 0
 
     def trim_and_normalize(self, array):
         
@@ -118,7 +136,14 @@ class ConnectFour():
                 # Fills empty array with available moves to prevent "RuntimeWarning: divide by zero encountered in divide" from killing the neural network.
                 for i in legal_moves:
                     array[i] = 1
-            array = array/np.linalg.norm(array)
+            #array = array/np.linalg.norm(array)
+            array = np.exp(array)/np.sum(np.exp(array))
             return array # Return normalized array (NB!: does not sum to 1 it seems)
-            
+    
         return array
+
+    def trim_and_softmax(self, array):
+        illegal_moves = self.get_illegal_moves()
+        for i in illegal_moves: # Replacec illegal moves with value -infinity which yield value 0 after softmax
+            array[i] = float('-inf')
+        return np.exp(array)/np.sum(np.exp(array))
