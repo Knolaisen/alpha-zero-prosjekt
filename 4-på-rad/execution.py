@@ -129,4 +129,4 @@ def train_exclusively():
     return None
 
 #train_exclusively()
-iterate(iterations= 2**8, games_each= 2**4)
+iterate(iterations= 2**10, games_each= 2)
