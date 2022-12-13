@@ -146,4 +146,11 @@ class ConnectFour():
         illegal_moves = self.get_illegal_moves()
         for i in illegal_moves: # Replacec illegal moves with value -infinity which yield value 0 after softmax
             array[i] = float('-inf')
-        return np.exp(array)/np.sum(np.exp(array))
+        array = np.exp(array)/np.sum(np.exp(array))
+        return array
+    
+    def trim(self, array):
+        illegal_moves = self.get_illegal_moves()
+        for i in illegal_moves:
+            array[i] = '-inf'
+        return array

@@ -125,7 +125,7 @@ class MonteCarlo():
 			# simulating opponents move
 			if simulation_game.counter % 2 == 1:
 				simulation_game.switch_sides()
-				policy = simulation_game.trim_and_softmax(
+				policy = simulation_game.trim(
 					self.network.forward(simulation_game.board, only_policy=True),
 				)
 				action = np.random.choice(np.where(policy == policy.max())[0])
@@ -146,7 +146,8 @@ class MonteCarlo():
 						self.node_dictionary[id] = [0,1] # Making a dictionary entry starting with 1 number of visits
 
 				policy = self.network.forward(simulation_game.board, only_policy=True)
-				policy = simulation_game.trim_and_softmax(policy)
+				#policy = simulation_game.trim_and_softmax(policy)
+				policy = simulation_game.trim(policy)
 				action = np.random.choice(np.where(policy == policy.max())[0])
 				simulation_game.move(action)
 				#print(f'Simulating move at column {action}\nResulting board state:\n{simulation_game.board}')

@@ -96,3 +96,51 @@ def reset_training_data(filename='training_data'): # TODO FIX: reset funksjonen 
 	file = open(filename, 'wb')
 	dump(empty_training_data, file)
 	file.close()
+
+def save_policy_accuracy(list, filename='policy_accuracy_history', debug=False) -> None:
+	with open(filename, 'wb') as outfile:
+		dump(dict, outfile)
+		if debug:
+			print('Saving node dictionary at the length of', len(dict))
+
+def save_policy_accuracy(number, filename='policy_accuracy_history', debug=False) -> None:
+	with open(filename, 'ab') as outfile:
+		dump(number, outfile)
+
+def save_value_accuracy(number, filename='value_accuracy_history', debug=False) -> None:
+	with open(filename, 'ab') as outfile:
+		dump(number, outfile)
+
+def load_policy_accuracy(filename='policy_accuracy_history', debug=False) -> list:
+	try:
+		data = []
+		infile = open(filename, 'rb')
+		infile.seek(0)
+		while True:
+			try:
+				data.append(load(infile))
+			except EOFError as e:
+				print(f'No more data to read. Closing file {filename} and returning data')
+				infile.close()
+				return data
+	except (OSError, IOError) as e:
+		if debug:
+			print('No previous data found. Returning empty array')
+		return []
+
+def load_value_accuracy(filename='value_accuracy_history', debug=False) -> list:
+	try:
+		data = []
+		infile = open(filename, 'rb')
+		infile.seek(0)
+		while True:
+			try:
+				data.append(load(infile))
+			except EOFError as e:
+				print(f'No more data to read. Closing file {filename} and returning data')
+				infile.close()
+				return data
+	except (OSError, IOError) as e:
+		if debug:
+			print('No previous data found. Returning empty array')
+		return []
