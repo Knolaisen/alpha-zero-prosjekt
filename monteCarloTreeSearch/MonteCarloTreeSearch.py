@@ -1,5 +1,8 @@
 ## Dependencies
+import math
 import numpy as np
+
+
 
 
 def monte_carlo_tree_search():
@@ -26,5 +29,7 @@ def backpropergation():
     """
     pass
 
-def upper_condidence_bound():
-    pass
+def upper_condidence_bound(empiricalMean: float, visitationOfParentNode: int, visitationOfChildNode: int ) -> float:
+    constant = math.sqrt(2)
+    exploredness = math.sqrt(math.log(visitationOfParentNode)/visitationOfChildNode)
+    return empiricalMean + constant * exploredness
