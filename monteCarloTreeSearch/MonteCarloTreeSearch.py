@@ -26,5 +26,5 @@ def backpropergation():
     """
     pass
 
-def upperCondidenceBound():
+def upper_condidence_bound():
     pass
