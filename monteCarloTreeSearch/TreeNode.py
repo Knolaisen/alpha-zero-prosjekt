@@ -1,10 +1,10 @@
 
 
-class treeNode():
+class TreeNode():
     """
     A class for the nodes, which among other things contains the board state
     """
-    def __init__(self, state, parent: "treeNode"):
+    def __init__(self, state, parent: "TreeNode"):
         """
         Main condstructor, takes in state and parent node.
         setting all num values as zero. 
