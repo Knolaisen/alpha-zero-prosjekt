@@ -37,9 +37,6 @@ def expansion(node:TreeNode):
             if child.get_state() != action:
                 new_node = TreeNode(node.get_state().move(action))
                 node.add_child(new_node)
-
-
-
     pass
 
 def simulation():
@@ -64,9 +61,9 @@ def ucb(node: TreeNode):
     Takes in node and returns upper confidence bound based on parent node visits and node visits
     """
     exploration_parameter = math.sqrt(2)
-    exploitation = node.get_numWins()/node.get_numVisits()
-    exploration = np.sqrt(np.log(node.get_parent().get_numVisits())/node.get_numVisits())
-    return exploitation + exploration_parameter*exploration
+    exploitation = node.get_wins()/node.get_visits()
+    exploration = np.sqrt(np.log(node.get_parent().get_visits())/node.get_visits())
+    return exploitation + exploration_parameter * exploration
 
 
 if __name__ == "__main__":
