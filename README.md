@@ -27,6 +27,6 @@ After we have trained and adjusted our AI, we want to show it off! What we have 
 
 ## Tech Stack - What are we using?
 
-Here at our project we mainly use Python to code. This is because most of the libraries made for machine learning is compatible with Python. It's also very "beginner friendly".
+Here at our project we mainly use Python for code. This is because most of the libraries made for machine learning is compatible with Python. It's also very "beginner friendly".
 
 
