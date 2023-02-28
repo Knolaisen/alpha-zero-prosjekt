@@ -4,7 +4,7 @@ class TreeNode():
     """
     A class for the nodes, which among other things contains the board state
     """
-    def __init__(self, state, parent: "TreeNode") -> None:
+    def __init__(self, state, parent=None) -> None:
         """
         Main condstructor, takes in state and parent node.
         setting all num values as zero. 
@@ -13,7 +13,7 @@ class TreeNode():
         self._state = state
         self._is_terminal = state.isTerminal()
         self._is_fully_expanded = self.isTerminal
-        self._parent = parent
+        self._parent : "TreeNode" = parent
         self._visits = 0
         self._wins = 0
         self._draws = 0
