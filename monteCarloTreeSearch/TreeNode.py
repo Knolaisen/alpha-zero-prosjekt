@@ -86,3 +86,8 @@ class TreeNode():
         Returns the state of the node
         """
         return self._state
+    def set_wins(self, wins) -> None:
+        self._wins = wins
+
+    def set_visits(self, visits) -> None:
+        self._visits = visits
