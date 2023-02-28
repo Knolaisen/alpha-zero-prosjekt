@@ -11,56 +11,56 @@ class TreeNode():
         """
         # _ makes the variables private
         self._state = state
-        self._isTerminal = state.isTerminal()
-        self._isFullyExpanded = self.isTerminal
+        self._is_terminal = state.isTerminal()
+        self._is_fully_expanded = self.isTerminal
         self._parent = parent
-        self._numVisits = 0
-        self._numWins = 0
-        self._numDraws = 0
-        self._numLoses = 0
+        self._visits = 0
+        self._wins = 0
+        self._draws = 0
+        self._loses = 0
         self._children = []
 
-    def get_numVisits(self) -> int:
+    def get_visits(self) -> int:
         """
         Returns numVisits
         """
-        return self.num_visists
+        return self._visits
 
-    def get_numWins(self) -> int:
+    def get_wins(self) -> int:
         """
         Returns numWins
         """
-        return self.num_wins
+        return self._wins
 
-    def get_numDraws(self) -> int:
+    def get_draws(self) -> int:
         """
         Returns numDraws
         """
-        return self.num_draws
+        return self._draws
 
-    def get_numLoses(self) -> int:
+    def get_loses(self) -> int:
         """
         Returns numLoses
         """
-        return self._numLoses
+        return self._loses
 
     def get_parent(self) -> "TreeNode":
         """
         Returns parent
         """
-        return self.parent
+        return self._parent
     
     def is_leaf(self) -> bool:
         """
         Returns True if self is leaf (has no children)
         """
-        return bool(len(self.children))
+        return bool(len(self._children))
     
     def is_parent(self) -> bool:
         """
         Returns True if self is parent (has children)
         """
-        return bool(self.parent)
+        return bool(self._parent)
     
     def get_children(self) -> list:
         """
