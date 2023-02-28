@@ -9,7 +9,7 @@ def monte_carlo_tree_search():
     pass
 
 def selection(node: TreeNode):
-    child_nodes = node.get_children
+    child_nodes = node.get_children()
     best_child = None
     best_node_value = 0
 
@@ -100,8 +100,8 @@ if __name__ == "__main__":
         wanted_node7._visits = 3
 
         selcted_node = selection(root_node)
-        print(selcted_node.get_state)
-
+        print(selcted_node.get_state())
+    selection_test()
 
 
         
