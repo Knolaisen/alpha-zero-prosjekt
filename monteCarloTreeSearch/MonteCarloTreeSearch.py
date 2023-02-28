@@ -7,8 +7,18 @@ import TreeNode
 def monte_carlo_tree_search():
     pass
 
-def selection():
-    pass
+def selection(node: TreeNode):
+    child_nodes = node.get_children
+    best_child = None
+    best_node_value = 0
+
+    while child_nodes:
+        for child_node in child_nodes:
+            if (best_node_value < ucb(child_node)):
+                best_child = child_node
+                best_node_value = ucb(child_node)
+        return selection(best_child)
+    return node
 
 def expansion(node):
     """
@@ -46,3 +56,21 @@ def ucb(node: TreeNode):
     exploration = np.sqrt(np.log(node.get_parent().get_numVisits())/node.get_numVisits())
     return exploitation + exploration_parameter*exploration
     
+    return (node.get_numWins()/node.get_numVisits()+exploration_parameter*np.sqrt(np.log(node.get_parent().get_numVisits())/node.get_numVisits()))
+
+
+if __name__ == "__main__":
+    def selection_test():
+        root_node = TreeNode
+        
+        unwanted_node1 = TreeNode
+        unwanted_node1 = TreeNode
+
+
+        wanted_node_parent = TreeNode
+
+        wanted_node
+
+
+
+        
