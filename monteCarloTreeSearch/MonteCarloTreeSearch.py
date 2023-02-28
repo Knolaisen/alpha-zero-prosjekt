@@ -61,11 +61,15 @@ if __name__ == "__main__":
     def selection_test():
         root_node = TreeNode("1")
         
-        unwanted_node1 = TreeNode("2", root_node)
-        unwanted_node2 = TreeNode("3", root_node)
+        wanted_node1 = TreeNode("2", root_node)
+        wanted_node2 = TreeNode("3", root_node)
+
+        wanted_node4 = TreeNode("4", wanted_node1)
+        wanted_node5 = TreeNode("5", wanted_node1)
+
+        wanted_node6 = TreeNode("6", wanted_node5)
+        wanted_node7 = TreeNode("7", wanted_node5)
         
-        wanted_node_parent1 = TreeNode("4", unwanted_node1)
-        wanted_node_parent2 = TreeNode("5", unwanted_node1)
 
 
         
