@@ -55,21 +55,20 @@ def ucb(node: TreeNode):
     exploitation = node.get_numWins()/node.get_numVisits()
     exploration = np.sqrt(np.log(node.get_parent().get_numVisits())/node.get_numVisits())
     return exploitation + exploration_parameter*exploration
-    
-    return (node.get_numWins()/node.get_numVisits()+exploration_parameter*np.sqrt(np.log(node.get_parent().get_numVisits())/node.get_numVisits()))
 
 
 if __name__ == "__main__":
     def selection_test():
-        root_node = TreeNode
+        root_node = TreeNode("1")
         
-        unwanted_node1 = TreeNode
-        unwanted_node1 = TreeNode
+        unwanted_node1 = TreeNode("2", root_node)
+        unwanted_node2 = TreeNode("3", root_node)
+        
+        wanted_node_parent1 = TreeNode("4", unwanted_node1)
+        wanted_node_parent2 = TreeNode("5", unwanted_node1)
 
 
-        wanted_node_parent = TreeNode
-
-        wanted_node
+        
 
 
 
