@@ -1,7 +1,8 @@
 ## Dependencies
 import math
 import numpy as np
-import TreeNode
+from TreeNode import TreeNode
+from state import state_handler
 
 
 def monte_carlo_tree_search():
@@ -20,14 +21,21 @@ def selection(node: TreeNode):
         return selection(best_child)
     return node
 
-def expansion(node):
+def expansion(node:TreeNode):
     """
-    In this process, a new child node is added to the tree to that node which was optimally reached during the selection process.
+    In this process, a new child node is added to the tree to that
+    node which was optimally reached during the selection process.
     """
-    #if not node.isTerminal():
-        #Something like for i in available moves:
-            #nc = treeNode(newState, self)
-            #children.append(nc)
+    legal_actions = state_handler.get_legal_actions()
+
+    #Checking if any of the children for optimal node is same as action
+    for action in legal_actions:
+        for child in node.get_children():
+            if child.get_state() != action:
+                new_node = TreeNode(node.get_state().move(action))
+                node.add_child()
+
+
     pass
 
 def simulation():
