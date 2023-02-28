@@ -86,3 +86,9 @@ class TreeNode():
         Returns the state of the node
         """
         return self._state
+    
+    def set_fully_expanded(self, value:bool) -> None:
+        """
+        Set the value of fully expanded
+        """
+        self._is_fully_expanded = value
