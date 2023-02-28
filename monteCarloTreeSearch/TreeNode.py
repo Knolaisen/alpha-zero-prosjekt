@@ -73,3 +73,10 @@ class TreeNode():
         Returns True if has children
         """
         return bool(len(self._children))
+    
+    def add_child(self, child:"TreeNode") -> None:
+        """
+        Add a node to children
+        """
+        self._children.append(child)
+        child._parent = self
