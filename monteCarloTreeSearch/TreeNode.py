@@ -17,6 +17,8 @@ class TreeNode():
         self._draws = 0
         self._loses = 0
         self._children = []
+        if parent is not None:
+            parent.add_child(self)
 
     def get_visits(self) -> int:
         """
