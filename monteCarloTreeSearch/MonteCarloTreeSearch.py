@@ -99,6 +99,9 @@ if __name__ == "__main__":
         wanted_node7._wins = 3
         wanted_node7._visits = 3
 
+        selcted_node = selection(root_node)
+        print(selcted_node.get_state)
+
 
 
         
