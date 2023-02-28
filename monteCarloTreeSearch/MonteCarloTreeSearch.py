@@ -10,10 +10,14 @@ def monte_carlo_tree_search():
 def selection():
     pass
 
-def expansion():
+def expansion(node):
     """
     In this process, a new child node is added to the tree to that node which was optimally reached during the selection process.
     """
+    #if not node.isTerminal():
+        #Something like for i in available moves:
+            #nc = treeNode(newState, self)
+            #children.append(nc)
     pass
 
 def simulation():
