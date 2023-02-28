@@ -24,9 +24,16 @@ class state_handler(ABC):
 		pass
 
 	@abstractmethod
-	def move(self, action):
+	def move(self, action) -> None:
 		"""
 		Do the move in the game
+		"""
+		pass
+	
+	@abstractmethod
+	def get_state(self):
+		"""
+		Get the state of the game.
 		"""
 		pass
 	
