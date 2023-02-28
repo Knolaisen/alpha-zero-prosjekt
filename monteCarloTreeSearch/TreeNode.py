@@ -11,8 +11,6 @@ class TreeNode():
         """
         # _ makes the variables private
         self._state = state
-        self._is_terminal = state.isTerminal()
-        self._is_fully_expanded = self.isTerminal
         self._parent : "TreeNode" = parent
         self._visits = 0
         self._wins = 0
