@@ -1,4 +1,4 @@
-
+from state import state_handler
 
 class TreeNode():
     """
@@ -62,7 +62,7 @@ class TreeNode():
         """
         return bool(self._parent)
     
-    def get_children(self) -> list:
+    def get_children(self) -> list["TreeNode"]:
         """
         Returns list of children
         """
@@ -80,3 +80,9 @@ class TreeNode():
         """
         self._children.append(child)
         child._parent = self
+
+    def get_state(self) -> state_handler:
+        """
+        Returns the state of the node
+        """
+        return self._state
