@@ -33,6 +33,6 @@ def upper_condidence_bound(empiricalMean: float, visitationOfParentNode: int, vi
     exploredness = math.sqrt(math.log(visitationOfParentNode)/visitationOfChildNode)
     return empiricalMean + constant * exploredness
  
-def ucb(node: TreeNode ):
-    
-    pass
+def ucb(node: TreeNode):
+    exploration_parameter = math.sqrt(2)
+    return (node.get_numWins()/node.get_numVisits()+exploration_parameter*np.sqrt(np.log(node.get_parent().get_numVisits())/node.get_numVisits()))
