@@ -9,7 +9,7 @@ class TreeNode():
         Main condstructor, takes in state and parent node.
         setting all num values as zero. 
         """
-        #_ makes the variables private
+        # _ makes the variables private
         self._state = state
         self._isTerminal = state.isTerminal()
         self._isFullyExpanded = self.isTerminal
@@ -61,6 +61,18 @@ class TreeNode():
         Returns True if self is parent (has children)
         """
         return self.parent  
+    
+    def get_children(self):
+        """
+        Returns list of children
+        """
+        return self._children
+    
+    def has_children(self):
+        """
+        Returns True if has children
+        """
+        return bool(len(self._children))
 
     def expand(self, state):
         """
