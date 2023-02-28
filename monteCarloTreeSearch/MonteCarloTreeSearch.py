@@ -3,13 +3,14 @@ import math
 import numpy as np
 from TreeNode import TreeNode
 from state import state_handler
+import random
 
 
 def monte_carlo_tree_search():
     pass
 
 def selection(node: TreeNode):
-    child_nodes = node.get_children
+    child_nodes = node.get_children()
     best_child = None
     best_node_value = 0
 
@@ -25,15 +26,18 @@ def expansion(node:TreeNode):
     """
     In this process, a new child node is added to the tree to that
     node which was optimally reached during the selection process.
+    For now only makes random moves to propegate further
     """
     legal_actions = state_handler.get_legal_actions()
+    rnd = random.randint(0, len(legal_actions)-1) #Choose random action
 
     #Checking if any of the children for optimal node is same as action
     for action in legal_actions:
         for child in node.get_children():
             if child.get_state() != action:
                 new_node = TreeNode(node.get_state().move(action))
-                node.add_child()
+                node.add_child(new_node)
+
 
 
     pass
@@ -100,8 +104,8 @@ if __name__ == "__main__":
         wanted_node7._visits = 3
 
         selcted_node = selection(root_node)
-        print(selcted_node.get_state)
-
+        print(selcted_node.get_state())
+    selection_test()
 
 
         
