@@ -68,35 +68,39 @@ def ucb(node: TreeNode):
 
 if __name__ == "__main__":
     def selection_test():
-        root_node = TreeNode("1")
+        root_node = TreeNode("0.1")
         root_node._wins = 11
         root_node._visits = 21 
 
         
-        wanted_node1 = TreeNode("2", root_node)
+        wanted_node1 = TreeNode("1.1", root_node)
         wanted_node1._wins = 7
         wanted_node1._visits = 10 
 
-        wanted_node2 = TreeNode("3", root_node)
-        wanted_node2._wins = 3
-        wanted_node2._visits = 8 
+        unwanted_node1 = TreeNode("1.2", root_node)
+        unwanted_node1._wins = 0
+        unwanted_node1._visits = 3 
+
+        unwanted_node2 = TreeNode("1.3", root_node)
+        unwanted_node2._wins = 3
+        unwanted_node2._visits = 8 
 
 
-        wanted_node4 = TreeNode("4", wanted_node1)
-        wanted_node4._wins = 2
-        wanted_node4._visits = 4 
+        unwanted_child_node1 = TreeNode("2.1", wanted_node1)
+        unwanted_child_node1._wins = 2
+        unwanted_child_node1._visits = 4 
 
-        wanted_node5 = TreeNode("5", wanted_node1)
-        wanted_node5._wins = 1
-        wanted_node5._visits = 6
+        wanted_child_node = TreeNode("2.2", wanted_node1)
+        wanted_child_node._wins = 1
+        wanted_child_node._visits = 6
 
 
-        wanted_node6 = TreeNode("6", wanted_node5)
+        wanted_node6 = TreeNode("3.1", wanted_child_node)
         wanted_node6._wins = 2
         wanted_node6._visits = 3
 
 
-        wanted_node7 = TreeNode("7", wanted_node5)
+        wanted_node7 = TreeNode("3.2", wanted_child_node)
         wanted_node7._wins = 3
         wanted_node7._visits = 3
 
