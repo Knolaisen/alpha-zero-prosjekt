@@ -56,11 +56,11 @@ class TreeNode():
         """
         return bool(len(self.children))
     
-    def parent(self):
+    def is_parent(self):
         """
         Returns True if self is parent (has children)
         """
-        return self.parent  
+        return bool(self.parent)
     
     def get_children(self):
         """
@@ -74,11 +74,4 @@ class TreeNode():
         """
         return bool(len(self._children))
 
-    def expand(self, state):
-        """
-        Makes the three larger by making a new child
-        """
-        #if not self.isTerminal:
-            #Something like for i in available moves:
-                #nc = treeNode(newState, self)
-                #children.append(nc)
+
