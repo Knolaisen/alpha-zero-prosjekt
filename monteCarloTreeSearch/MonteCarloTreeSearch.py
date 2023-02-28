@@ -1,8 +1,7 @@
 ## Dependencies
 import math
 import numpy as np
-
-
+import TreeNode
 
 
 def monte_carlo_tree_search():
@@ -33,3 +32,7 @@ def upper_condidence_bound(empiricalMean: float, visitationOfParentNode: int, vi
     constant = math.sqrt(2)
     exploredness = math.sqrt(math.log(visitationOfParentNode)/visitationOfChildNode)
     return empiricalMean + constant * exploredness
+ 
+def ucb(node: TreeNode ):
+    
+    pass
