@@ -38,8 +38,11 @@ def upper_condidence_bound(empiricalMean: float, visitationOfParentNode: int, vi
     return empiricalMean + constant * exploredness
  
 def ucb(node: TreeNode):
+    """
+    Takes in node and returns upper confidence bound based on parent node visits and node visits
+    """
     exploration_parameter = math.sqrt(2)
-    exploitation=node.get_numWins()/node.get_numVisits()
-    exploration= np.sqrt(np.log(node.get_parent().get_numVisits())/node.get_numVisits())
+    exploitation = node.get_numWins()/node.get_numVisits()
+    exploration = np.sqrt(np.log(node.get_parent().get_numVisits())/node.get_numVisits())
     return exploitation + exploration_parameter*exploration
     
