@@ -58,7 +58,17 @@ def expansion(node:TreeNode):
     
 
 
-def choose_move(legal_actions):
+
+def expansion(node: TreeNode):
+    """
+    In this process, a new child node is added to the tree to that
+    node which was optimally reached during the selection process.
+    For now only makes random moves to propegate further
+    """
+    legal_actions = state_handler.get_legal_actions()
+    pass
+
+def choose_move(legal_actions: list):
     """"
     Takes in legal moves an chooses one of them at random
     """
@@ -66,19 +76,27 @@ def choose_move(legal_actions):
     move = legal_actions[index]
     return move
 
-
-def simulation():
+def simulation(node: TreeNode) -> int:
     """
     In this process, a simulation is performed by choosing moves or strategies until a result or predefined state is achieved.
     """
-    pass
+    state = node.get_state()
+    while state.is_finished():
+        legal_action = state_handler.get_legal_actions()
+        state.move(choose_move(legal_action)) # TODO refactor
+    
+    return state.get_winner()
 
-def backpropergation():
+def backpropergation(node: TreeNode, winner: int) -> None:
     """
     After determining the value of the newly added node, the remaining tree must be updated. So, the backpropagation process is performed, where it backpropagates from the new node to the root node. During the process, the number of simulation stored in each node is incremented. Also, if the new node’s simulation results in a win, then the number of wins is also incremented.
     """
-    pass
-
+    node.add_visits()
+    if (winner > 0):
+        node.add_win()
+    if node.parent:
+        node.parent.backpropagate(-result)
+    
 def upper_condidence_bound(empiricalMean: float, visitationOfParentNode: int, visitationOfChildNode: int ) -> float:
     constant = math.sqrt(2)
     exploredness = math.sqrt(math.log(visitationOfParentNode)/visitationOfChildNode)
@@ -130,6 +148,11 @@ if __name__ == "__main__":
 
         selcted_node = selection(root_node)
         print(selcted_node.get_state())
+
+    def node_expantion_test():
+        pass
+        
+    ### CALL TESTS
     selection_test()
 
 
