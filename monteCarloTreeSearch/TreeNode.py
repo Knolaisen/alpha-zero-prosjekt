@@ -104,3 +104,13 @@ class TreeNode():
         Set the value of visits
         '''
         self._visits = visits
+    
+    def has_parent(self) -> bool:
+        return self._parent != None
+    
+    def add_visits(self) -> None:
+        self._visits = self._visits + 1
+
+    def add_win(self) -> None:
+        self._wins = self._wins + 1
+        
