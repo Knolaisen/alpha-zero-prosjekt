@@ -22,13 +22,6 @@ def selection(node: TreeNode):
         return selection(best_child)
     return node
 
-def choose_move(legal_actions):
-    """"
-    Takes in legal moves an chooses one of them at random
-    """
-    index = random.randint(0, len(legal_actions)-1) #chooses random index from the list
-    move = legal_actions[index]
-    return move
 
 def expansion(node:TreeNode):
     """
@@ -54,6 +47,15 @@ def expansion(node:TreeNode):
 
 
     pass
+
+def choose_move(legal_actions):
+    """"
+    Takes in legal moves an chooses one of them at random
+    """
+    index = random.randint(0, len(legal_actions)-1) #chooses random index from the list
+    move = legal_actions[index]
+    return move
+
 
 def simulation():
     """
