@@ -6,7 +6,7 @@ class TreeNode():
     """
     def __init__(self, state, parent=None) -> None:
         """
-        Main condstructor, takes in state and parent node.
+        Main constructor, takes in state and parent node.
         setting all num values as zero. 
         """
         # _ makes the variables private
@@ -17,6 +17,8 @@ class TreeNode():
         self._draws = 0
         self._loses = 0
         self._children = []
+        if parent is not None:
+            parent.add_child(self)
 
     def get_visits(self) -> int:
         """
@@ -92,7 +94,13 @@ class TreeNode():
         self._is_fully_expanded = value
         
     def set_wins(self, wins) -> None:
+        '''
+        Set the value of wins
+        '''
         self._wins = wins
 
     def set_visits(self, visits) -> None:
+        '''
+        Set the value of visits
+        '''
         self._visits = visits
