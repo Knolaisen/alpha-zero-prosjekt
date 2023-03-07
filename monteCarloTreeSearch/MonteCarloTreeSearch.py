@@ -10,9 +10,11 @@ def monte_carlo_tree_search():
     pass
 
 def selection(node: TreeNode):
-    """
-    Selection method
-    """
+    '''
+    This selects the best leaf for expansion.
+    For Monte Carlo this is the node that you should expand.
+    Given by exploration and exploitation means.
+    '''
     child_nodes = node.get_children()
     best_child = None
     best_node_value = 0
