@@ -22,6 +22,14 @@ def selection(node: TreeNode):
         return selection(best_child)
     return node
 
+def choose_move(legal_actions):
+    """"
+    Takes in legal moves an chooses one of them at random
+    """
+    index = random.randint(0, len(legal_actions)-1) #chooses random index from the list
+    move = legal_actions[index]
+    return move
+
 def expansion(node:TreeNode):
     """
     In this process, a new child node is added to the tree to that
@@ -29,14 +37,19 @@ def expansion(node:TreeNode):
     For now only makes random moves to propegate further
     """
     legal_actions = state_handler.get_legal_actions()
-    rnd = random.randint(0, len(legal_actions)-1) #Choose random action
+    
 
-    #Checking if any of the children for optimal node is same as action
-    for action in legal_actions:
-        for child in node.get_children():
-            if child.get_state() != action:
-                new_node = TreeNode(node.get_state().move(action))
-                node.add_child(new_node)
+
+
+    # legal_actions = state_handler.get_legal_actions()
+    # rnd = random.randint(0, len(legal_actions)-1) #Choose random action
+
+    # #Checking if any of the children for optimal node is same as action
+    # for action in legal_actions:
+    #     for child in node.get_children():
+    #         if child.get_state() != action:
+    #             new_node = TreeNode(node.get_state().move(action))
+    #             node.add_child(new_node)
 
 
 
