@@ -10,6 +10,9 @@ def monte_carlo_tree_search():
     pass
 
 def selection(node: TreeNode):
+    """
+    Selection method
+    """
     child_nodes = node.get_children()
     best_child = None
     best_node_value = 0
@@ -22,7 +25,7 @@ def selection(node: TreeNode):
         return selection(best_child)
     return node
 
-def expansion(node:TreeNode):
+def expansion(node: TreeNode):
     """
     In this process, a new child node is added to the tree to that
     node which was optimally reached during the selection process.
@@ -39,10 +42,25 @@ def expansion(node:TreeNode):
                 node.add_child(new_node)
     pass
 
-def simulation():
+def simulation(node: TreeNode):
     """
     In this process, a simulation is performed by choosing moves or strategies until a result or predefined state is achieved.
+    
+    Continuing from the newly-created node in the expansion phase, moves are selected randomly and the game state is repeatedly advanced. 
+    This repeats until the game is finished and a winner emerges. No new nodes are created in this phase.
+
+    This is a good time to remind ourselves that nodes in the search tree correspond to nodes in the game tree. 
+    In this phase, we are simply applying the rules of the game to repeatedly (1) find all legal moves in the current game state, 
+    (2) choose one legal move randomly, then (3) advance the game state. 
+    No part of this process is stored. This phase ends when we reach a state where the game is finished.
+
+    Note: A game played during the simulation phase is either called a simulation or a playout. This may get confusing because one iteration of the whole 4-phase process is also sometimes called a simulation or a playout. Be aware of this and use your discretion to disambiguate.
+
     """
+    
+    while True:
+        node.get_state()
+
     pass
 
 def backpropergation():
@@ -106,6 +124,10 @@ if __name__ == "__main__":
 
         selcted_node = selection(root_node)
         print(selcted_node.get_state())
+
+    def node_expantion_test():
+        
+    ### CALL TESTS
     selection_test()
 
 
