@@ -37,7 +37,7 @@ def expansion(node:TreeNode, state_handler: state_handler):
     """
 
     while True:
-
+        
         generate = True
         legal_actions = state_handler.get_legal_actions(node)
 
@@ -53,6 +53,7 @@ def expansion(node:TreeNode, state_handler: state_handler):
         if generate:
             new_node = TreeNode(state = None, parent = node)
             node.add_child(new_node) 
+            print(node)
             break
 
 
@@ -108,32 +109,23 @@ if __name__ == "__main__":
         root_node._visits = 21 
 
         
-        wanted_node1 = TreeNode("2", root_node)
+        wanted_node1 = TreeNode("2", parent = root_node)
         wanted_node1._wins = 7
-        wanted_node1._visits = 10 
+        wanted_node1._visits = 10
 
-        wanted_node2 = TreeNode("3", root_node)
+        wanted_node2 = TreeNode("3", parent = root_node)
         wanted_node2._wins = 3
         wanted_node2._visits = 8 
 
 
-        wanted_node4 = TreeNode("4", wanted_node1)
-        wanted_node4._wins = 2
-        wanted_node4._visits = 4 
+        wanted_node3 = TreeNode("4", parent = wanted_node1)
+        wanted_node3._wins = 2
+        wanted_node3._visits = 4 
 
-        wanted_node5 = TreeNode("5", wanted_node1)
-        wanted_node5._wins = 1
-        wanted_node5._visits = 6
+        wanted_node4 = TreeNode("5", parent = wanted_node1)
+        wanted_node4._wins = 1
+        wanted_node4._visits = 6
 
-
-        wanted_node6 = TreeNode("6", wanted_node5)
-        wanted_node6._wins = 2
-        wanted_node6._visits = 3
-
-
-        wanted_node7 = TreeNode("7", wanted_node5)
-        wanted_node7._wins = 3
-        wanted_node7._visits = 3
         return root_node
 
     def selection_test():
@@ -172,15 +164,14 @@ if __name__ == "__main__":
         selcted_node = selection(root_node)
         print(selcted_node.get_state())
 
-    def node_expantion_test():
-        pass
+
     
     ### CALL TESTS
     #selection_test()
     Tree = setup_test_tree() 
-    print(Tree.get_children())
+    print(len(Tree.get_children()))
     expansion(Tree, testhandler)
-    print(Tree.get_children())
+    print(len(Tree.get_children()))
 
 
         
