@@ -85,9 +85,9 @@ def simulation(node: TreeNode) -> int:
     In this process, a simulation is performed by choosing moves or strategies until a result or predefined state is achieved.
     """
     state = node.get_state()
-    while state.is_finished():
-        legal_action = state_handler.get_legal_actions()
-        state.move(choose_move(legal_action)) # TODO refactor
+    while not state.is_finished():
+        legal_actions = state_handler.get_legal_actions()
+        state.move(choose_move(legal_actions)) # TODO refactor
     
     return state.get_winner()
 
