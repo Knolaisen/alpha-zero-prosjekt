@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-from Action import Action
 
 class state_handler(ABC):
     
@@ -25,7 +24,7 @@ class state_handler(ABC):
 		pass
 
 	@abstractmethod
-	def move(self, action: Action) -> None:
+	def move(self, action) -> None:
 		"""
 		Do the move in the game
 		"""

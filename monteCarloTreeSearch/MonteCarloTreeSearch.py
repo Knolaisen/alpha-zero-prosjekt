@@ -35,12 +35,10 @@ def expansion(node:TreeNode):
     Repeats until a child is generated
     """
 
-    new_node = True
-    
-    while new_node:
+    while True:
 
         generate = True
-        legal_actions = state_handler.get_legal_actions()
+        legal_actions = state_handler.get_legal_actions(node)
 
         if len(legal_actions) == len(node.get_children()):
             break
@@ -84,7 +82,7 @@ def backpropergation(node: TreeNode, winner: int) -> None:
     if (winner > 0):
         node.add_win()
     if node.parent:
-        node.parent.backpropagate(-result)
+        pass#node.parent.backpropagate(-result)
     
 def upper_condidence_bound(empiricalMean: float, visitationOfParentNode: int, visitationOfChildNode: int ) -> float:
     constant = math.sqrt(2)
@@ -102,6 +100,41 @@ def ucb(node: TreeNode):
 
 
 if __name__ == "__main__":
+
+    def setup_test_tree():
+        root_node = TreeNode("1")
+        root_node._wins = 11
+        root_node._visits = 21 
+
+        
+        wanted_node1 = TreeNode("2", root_node)
+        wanted_node1._wins = 7
+        wanted_node1._visits = 10 
+
+        wanted_node2 = TreeNode("3", root_node)
+        wanted_node2._wins = 3
+        wanted_node2._visits = 8 
+
+
+        wanted_node4 = TreeNode("4", wanted_node1)
+        wanted_node4._wins = 2
+        wanted_node4._visits = 4 
+
+        wanted_node5 = TreeNode("5", wanted_node1)
+        wanted_node5._wins = 1
+        wanted_node5._visits = 6
+
+
+        wanted_node6 = TreeNode("6", wanted_node5)
+        wanted_node6._wins = 2
+        wanted_node6._visits = 3
+
+
+        wanted_node7 = TreeNode("7", wanted_node5)
+        wanted_node7._wins = 3
+        wanted_node7._visits = 3
+        return root_node
+
     def selection_test():
         root_node = TreeNode("1")
         root_node._wins = 11
@@ -140,9 +173,13 @@ if __name__ == "__main__":
 
     def node_expantion_test():
         pass
-        
+    
     ### CALL TESTS
-    selection_test()
+    #selection_test()
+    Tree = setup_test_tree()
+    print(Tree.get_children())
+    expansion(Tree)
+    print(Tree.get_children())
 
 
         
