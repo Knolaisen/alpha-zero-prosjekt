@@ -43,7 +43,7 @@ def expansion(node:TreeNode, state_handler: state_handler):
         if len(legal_actions) == len(node.get_children()):
             break
 
-        move = choose_move(legal_actions)
+        #move = choose_move(legal_actions)
             
         # for child in node.get_children():
         #     if child.get_state() == node.get_state().move(node, move):
@@ -53,7 +53,7 @@ def expansion(node:TreeNode, state_handler: state_handler):
             new_node = TreeNode(state = None, parent = node)
             node.add_child(new_node) 
             print(node)
-            break
+            return(new_node)
 
 def choose_move(legal_actions: list):
     """"
