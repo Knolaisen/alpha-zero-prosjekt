@@ -35,7 +35,6 @@ def expansion(node:TreeNode, state_handler: state_handler):
     checking if that move has a corresponding child, if not it generates a child with the random move.
     Repeats until a child is generated
     """
-
     while True:
 
         generate = True
@@ -54,7 +53,6 @@ def expansion(node:TreeNode, state_handler: state_handler):
             new_node = TreeNode(state = None, parent = node)
             node.add_child(new_node) 
             break
-
 
 def choose_move(legal_actions: list):
     """"
@@ -75,15 +73,17 @@ def simulation(node: TreeNode) -> int:
     
     return state.get_winner()
 
-def backpropergation(node: TreeNode, winner: int) -> None:
+def backpropergation(node: TreeNode, result: int) -> None:
     """
-    After determining the value of the newly added node, the remaining tree must be updated. So, the backpropagation process is performed, where it backpropagates from the new node to the root node. During the process, the number of simulation stored in each node is incremented. Also, if the new node’s simulation results in a win, then the number of wins is also incremented.
+    After determining the value of the newly added node, the remaining tree must be updated. 
+    So, the backpropagation process is performed, where it backpropagates from the new node to the root node. 
+    During the process, the number of simulation stored in each node is incremented. Also, if the new node’s 
+    simulation results in a win, then the number of wins is also incremented.
     """
     node.add_visits()
-    if (winner > 0):
-        node.add_win()
-    if node.parent:
-        pass#node.parent.backpropagate(-result)
+    node.add_reward(result)
+    if not node.is_root(): #if node is not root, then it has a parent and backpropagates to it
+        backpropergation(node.get_parent(), -result)
     
 def upper_condidence_bound(empiricalMean: float, visitationOfParentNode: int, visitationOfChildNode: int ) -> float:
     constant = math.sqrt(2)

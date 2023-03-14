@@ -12,7 +12,7 @@ class state_handler(ABC):
 	@abstractmethod
 	def get_winner(self) -> int:
 		"""
-		Whom won this game
+		Whom won this game -1, 0, 1. 1 is the first player, -1 is the second player and 0 is a draw.
 		"""
 		pass
 
