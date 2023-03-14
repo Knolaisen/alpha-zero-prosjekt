@@ -51,7 +51,6 @@ def expansion(node:TreeNode, state_handler: state_handler):
             
         if generate:
             new_node = TreeNode(state = None, parent = node)
-            node.add_child(new_node) 
             print(node)
             return(new_node)
 
@@ -170,8 +169,13 @@ if __name__ == "__main__":
     #selection_test()
     Tree = setup_test_tree() 
     print(len(Tree.get_children()))
+    print(Tree.get_children())
+
     expansion(Tree, testhandler)
+
     print(len(Tree.get_children()))
+    print(Tree.get_children())
+
 
 
         
