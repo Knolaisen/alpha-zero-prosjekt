@@ -4,6 +4,7 @@ import numpy as np
 from TreeNode import TreeNode
 from state import state_handler
 import random
+from Testhandler import testhandler
 
 
 def monte_carlo_tree_search():
@@ -178,7 +179,7 @@ if __name__ == "__main__":
     #selection_test()
     Tree = setup_test_tree()
     print(Tree.get_children())
-    expansion(Tree)
+    expansion(Tree, testhandler)
     print(Tree.get_children())
 
 
