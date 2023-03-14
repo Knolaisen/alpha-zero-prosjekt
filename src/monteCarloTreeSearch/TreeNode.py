@@ -1,72 +1,146 @@
-
+from state import state_handler
 
 class TreeNode():
     """
     A class for the nodes, which among other things contains the board state
     """
-    def __init__(self, state, parent: "TreeNode"):
+    def __init__(self, state, parent=None) -> None:
         """
-        Main condstructor, takes in state and parent node.
+        Main constructor, takes in state and parent node.
         setting all num values as zero. 
         """
-        #_ makes the variables private
+        # _ makes the variables private
         self._state = state
-        self._isTerminal = state.isTerminal()
-        self._isFullyExpanded = self.isTerminal
-        self._parent = parent
-        self._numVisits = 0
-        self._numWins = 0
-        self._numDraws = 0
-        self._numLoses = 0
+        self._parent : "TreeNode" = parent
+        self._visits = 0
+        self._wins = 0
+        self._draws = 0
+        self._loses = 0
         self._children = []
+        self._root = False
+        if parent is not None:
+            parent.add_child(self)
 
-    def get_numVisits(self):
+    def get_visits(self) -> int:
         """
         Returns numVisits
         """
-        return self.num_visists
+        return self._visits
 
-    def get_numWins(self):
+    def get_wins(self) -> int:
         """
         Returns numWins
         """
-        return self.num_wins
+        return self._wins
 
-    def get_numDraws(self):
+    def get_draws(self) -> int:
         """
         Returns numDraws
         """
-        return self.num_draws
+        return self._draws
 
-    def get_numLoses(self):
+    def get_loses(self) -> int:
         """
         Returns numLoses
         """
-        return self._numLoses
+        return self._loses
 
-    def get_parent(self):
+    def get_parent(self) -> "TreeNode":
         """
         Returns parent
         """
-        return self.parent
+        return self._parent
     
-    def is_leaf(self):
+    def is_leaf(self) -> bool:
         """
         Returns True if self is leaf (has no children)
         """
-        return bool(len(self.children))
+        return bool(len(self._children))
     
-    def parent(self):
+    def is_parent(self) -> bool:
         """
         Returns True if self is parent (has children)
         """
-        return self.parent  
+        return bool(self._parent)
+    
+    def get_children(self) -> list["TreeNode"]:
+        """
+        Returns list of children
+        """
+        return self._children
+    
+    def has_children(self) -> bool:
+        """
+        Returns True if has children
+        """
+        return bool(len(self._children))
+    
+    def add_child(self, child:"TreeNode") -> None:
+        """
+        Add a node to children
+        """
+        self._children.append(child)
+        child._parent = self
 
-    def expand(self, state):
+    def get_state(self) -> state_handler:
         """
-        Makes the three larger by making a new child
+        Returns the state of the node
         """
-        #if not self.isTerminal:
-            #Something like for i in available moves:
-                #nc = treeNode(newState, self)
-                #children.append(nc)
+        return self._state
+    
+    def set_root(self, value:bool) -> None:
+        """
+        Set the value of root
+        """
+        self._root = value
+
+    def is_root(self) -> bool:
+        """
+        Returns True if root
+        """
+        return self._root
+    
+    def set_fully_expanded(self, value:bool) -> None:
+        """
+        Set the value of fully expanded
+        """
+        self._is_fully_expanded = value
+        
+    def set_wins(self, wins) -> None:
+        '''
+        Set the value of wins
+        '''
+        self._wins = wins
+
+    def set_visits(self, visits) -> None:
+        '''
+        Set the value of visits
+        '''
+        self._visits = visits
+    
+    def has_parent(self) -> bool:
+        return self._parent != None
+    
+    def add_visits(self) -> None:
+        self._visits = self._visits + 1
+
+    def add_win(self) -> None:
+        self._wins = self._wins + 1
+
+    def add_draw(self) -> None:
+        self._wins += 0.5
+
+    def add_reward(self, reward: int) -> None:
+        """
+        Adds a reward to the node
+        """
+        if reward == 1:
+            self.add_win()
+        elif reward == 0:
+            self.add_draw()
+        elif reward == -1:
+            pass
+        else:
+            raise ValueError("Reward must be 1, 0 or -1")
+
+        
