@@ -55,18 +55,7 @@ def expansion(node:TreeNode):
             new_node = TreeNode(node.get_state().move(move))
             node.add_child(new_node) 
             break
-    
 
-
-
-def expansion(node: TreeNode):
-    """
-    In this process, a new child node is added to the tree to that
-    node which was optimally reached during the selection process.
-    For now only makes random moves to propegate further
-    """
-    legal_actions = state_handler.get_legal_actions()
-    pass
 
 def choose_move(legal_actions: list):
     """"
