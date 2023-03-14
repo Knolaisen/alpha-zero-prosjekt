@@ -17,6 +17,7 @@ class TreeNode():
         self._draws = 0
         self._loses = 0
         self._children = []
+        self._root = False
         if parent is not None:
             parent.add_child(self)
 
@@ -87,6 +88,18 @@ class TreeNode():
         """
         return self._state
     
+    def set_root(self, value:bool) -> None:
+        """
+        Set the value of root
+        """
+        self._root = value
+
+    def is_root(self) -> bool:
+        """
+        Returns True if root
+        """
+        return self._root
+    
     def set_fully_expanded(self, value:bool) -> None:
         """
         Set the value of fully expanded
@@ -113,4 +126,21 @@ class TreeNode():
 
     def add_win(self) -> None:
         self._wins = self._wins + 1
+
+    def add_draw(self) -> None:
+        self._wins += 0.5
+
+    def add_reward(self, reward: int) -> None:
+        """
+        Adds a reward to the node
+        """
+        if reward == 1:
+            self.add_win()
+        elif reward == 0:
+            self.add_draw()
+        elif reward == -1:
+            pass
+        else:
+            raise ValueError("Reward must be 1, 0 or -1")
+
         
