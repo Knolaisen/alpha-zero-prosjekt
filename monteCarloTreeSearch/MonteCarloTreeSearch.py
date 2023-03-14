@@ -46,12 +46,12 @@ def expansion(node:TreeNode, state_handler: state_handler):
 
         move = choose_move(legal_actions)
             
-        for child in node.get_children():
-            if child.get_state() == node.get_state().move(move):
-                generate = False
+        # for child in node.get_children():
+        #     if child.get_state() == node.get_state().move(node, move):
+        #         generate = False
             
         if generate:
-            new_node = TreeNode(node.get_state().move(move))
+            new_node = TreeNode(state = None, parent = node)
             node.add_child(new_node) 
             break
 
@@ -177,7 +177,7 @@ if __name__ == "__main__":
     
     ### CALL TESTS
     #selection_test()
-    Tree = setup_test_tree()
+    Tree = setup_test_tree() 
     print(Tree.get_children())
     expansion(Tree, testhandler)
     print(Tree.get_children())
