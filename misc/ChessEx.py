@@ -1,22 +1,28 @@
 import random
 import chess
-from chessboard import display
-
 '''
 This is an example chessboard we used in the early stages.
 '''
 board = chess.Board()
-display.start(board.fen())
+
+board.legal_moves  
+moves_list = [] 
+board.push_san("e4")
+board.push_san("e5")
+board.push_san("Qh5")
+board.push_san("Nc6")
+print(board.legal_moves)
+for i in board.legal_moves:
+    moves_list.append(i)
+print(moves_list)
+
+
+board.push_san("Bc4")
+board.push_san("Nf6")
+board.push_san("Qxf7")
+print(board.is_checkmate())
 print(board)
 print(board.legal_moves)
-while not board.is_game_over():
-  #print()
-  action = random.choice(list(board.legal_moves))
-  board.push(action)
-  display.start(board.fen())
-  #print(action)
 
-print(board.fullmove_number)
-print(board.result())
-while True:
-  display.start(board.fen())
+
+
