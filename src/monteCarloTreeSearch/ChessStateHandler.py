@@ -29,8 +29,11 @@ class ChessState(state_handler):
 		# Get a list of legal moves for the current state of the game
 		# You can use a library like python-chess to generate legal moves
 		# Return the legal moves as a list
+		moves_list = []
+		for i in self.Board.legal_moves:
+			moves_list.append(i)
 
-		return self.Board.legal_moves
+		return moves_list
 
 	def move(self, action) -> None:
 		# Execute a move on the chess board
