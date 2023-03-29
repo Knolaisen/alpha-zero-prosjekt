@@ -8,6 +8,11 @@ import random
 
 
 def monte_carlo_tree_search(root: TreeNode, state_handler: state_handler, max_itr=0, max_time=0) -> TreeNode:
+    """
+    Runs the monte carlo tree search algorithm.
+    If max_itr is 0, it will run until max_time is reached, else it will run for max_itr iterations.
+    Returns the root node of the tree generated with the given root.
+    """
     if max_itr == 0:
         start_time = time.time()
         while time.time() - start_time < max_time:
