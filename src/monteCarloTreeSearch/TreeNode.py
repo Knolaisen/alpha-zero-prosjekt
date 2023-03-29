@@ -17,7 +17,6 @@ class TreeNode():
         self._draws = 0
         self._loses = 0
         self._children = []
-        self._root = False
         if parent is not None:
             parent.add_child(self)
 
@@ -88,19 +87,7 @@ class TreeNode():
         """
         return self._state
     
-    def set_root(self, value:bool) -> None:
-        """
-        Set the value of root
-        """
-        self._root = value
-
-    def is_root(self) -> bool:
-        """
-        Returns True if root
-        """
-        return self._root
-    
-    def set_fully_expanded(self, value:bool) -> None:
+    def set_fully_expanded(self, value: bool) -> None:
         """
         Set the value of fully expanded
         """
