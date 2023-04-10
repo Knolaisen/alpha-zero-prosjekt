@@ -1,5 +1,5 @@
 import pytest
-from monteCarloTreeSearch.MonteCarloTreeSearch import backpropergation, expansion, selection, simulation, ucb
+from monteCarloTreeSearch.MonteCarloTreeSearch import backpropagation, expansion, selection, simulation, ucb
 from monteCarloTreeSearch.TreeNode import TreeNode
 from tests.monteCarloTreeSearch.MockStateHandler import mock_state_handler
 
@@ -48,15 +48,15 @@ def test_simulation():
     # Ensure that the simulation function returns the correct winner for a finished game state
     assert simulation(root) == 1
 
-def test_backpropergation(mock_state_handler):
+def test_backpropagation(mock_state_handler):
     node = TreeNode(state=None, parent=None)
     result = 1
-    backpropergation(node, result)
+    backpropagation(node, result)
     assert node.get_visits() == 1
     assert node.get_wins() == 1
     
     result = -1
-    backpropergation(node, result)
+    backpropagation(node, result)
     assert node.get_visits() == 2
     assert node.get_wins() == 0
 

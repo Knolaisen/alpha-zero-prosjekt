@@ -19,14 +19,14 @@ def monte_carlo_tree_search(root: TreeNode, state_handler: StateHandler, policy,
             choosen_node: TreeNode = selection(root)
             created_node = expansion(choosen_node, state_handler)
             result = simulation(created_node)
-            backpropergation(created_node, result)
+            backpropagation(created_node, result)
     else:
         itr = 0
         while itr < max_itr:
             choosen_node: TreeNode = selection(root)
             created_node = expansion(choosen_node, state_handler)
             result = simulation(created_node)
-            backpropergation(created_node, result)
+            backpropagation(created_node, result)
             itr += 1
 
     return root
@@ -119,7 +119,7 @@ def simulation(node: TreeNode) -> int:
     return state.get_winner()
 
 
-def backpropergation(node: TreeNode, result: int) -> None:
+def backpropagation(node: TreeNode, result: int) -> None:
     """
     After determining the value of the newly added node, the remaining tree must be updated. 
     So, the backpropagation process is performed, where it backpropagates from the new node to the root node. 
@@ -129,15 +129,7 @@ def backpropergation(node: TreeNode, result: int) -> None:
     node.add_visits()
     node.add_reward(result)
     if not node.is_root():  # if node is not root, then it has a parent and backpropagates to it
-        backpropergation(node.get_parent(), -result)
-
-
-def upper_condidence_bound(empiricalMean: float, visitationOfParentNode: int, visitationOfChildNode: int) -> float:
-    constant = math.sqrt(2)
-    exploredness = math.sqrt(
-        math.log(visitationOfParentNode)/visitationOfChildNode)
-    return empiricalMean + constant * exploredness
-
+        backpropagation(node.get_parent(), -result)
 
 def ucb(node: TreeNode):
     """
