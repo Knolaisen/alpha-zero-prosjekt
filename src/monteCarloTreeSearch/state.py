@@ -37,3 +37,10 @@ class StateHandler(ABC):
         Get the state of the game.
         """
         pass
+    
+    @abstractmethod
+    def render(self):
+        """
+        Render the game state
+        """
+        pass

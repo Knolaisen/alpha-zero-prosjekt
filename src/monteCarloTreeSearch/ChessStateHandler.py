@@ -1,4 +1,4 @@
-from src.monteCarloTreeSearch.state import StateHandler
+from state import StateHandler
 import chess
 
 
@@ -40,3 +40,16 @@ class ChessState(StateHandler):
     def get_state(self):
         """Gives the current state of the board, uset to visualize board"""
         return self.Board
+    
+    def render(self):
+        """Renders the board"""
+        print(self.Board)
+
+
+if __name__ == "__main__":
+    # Test the class
+    state = ChessState()
+    print(state.get_state())
+    print(state.get_legal_actions())
+    state.move(state.get_legal_actions()[0])
+    print(state.get_legal_actions())
