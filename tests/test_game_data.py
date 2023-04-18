@@ -6,6 +6,7 @@ def test_constructor():
     print("======= Constructor GameData =======")
     data = GameData()
     assert True
+    
 # features = np.asarray([-1.0, 1.0, 0.0, -1.0, -1.0])
 # label = np.asarray([0.0, 1.0, 0.0, 0.0])
 # board_state = "1.0,0.0,-1.0,-1.0:0.0,1.0,0.0,0.0"

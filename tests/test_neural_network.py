@@ -1,5 +1,5 @@
 import torch
-import neural_network
+import neural_network.neural_network as neural_network
 import pytest
 
 def test_save():
@@ -33,3 +33,4 @@ def test_load():
     assert model.hidden_size == 1
     assert model.output_size == 1
 
+test_overwriting()
