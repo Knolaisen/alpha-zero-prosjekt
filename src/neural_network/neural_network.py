@@ -1,6 +1,7 @@
 
 import torch
 import torch.nn as nn
+import config
 
 
 class NeuralNet(nn.Module):
@@ -26,9 +27,19 @@ class NeuralNet(nn.Module):
 
     def save_model(self, iteration: int, simuations: int) -> None:
         """Save the model to a file"""
-        pass
+        file_name = f"model_{iteration}_{simuations}.pt"
+        torch.save(self.state_dict(), f"{config.MODEL_PATH}/{file_name}")
 
     @staticmethod
-    def loadModel(file_name: str, model: "NeuralNet") -> "NeuralNet":
+    def loadModel(file_name: str) -> "NeuralNet":
         """Load the model from a file"""
-        pass
+
+        model = NeuralNet(config.INPUT_SIZE, config.HIDDEN_SIZE, config.OUTPUT_SIZE)
+
+        loaded_model: "NeuralNet"= torch.load(f"{config.MODEL_PATH}/{file_name}")
+
+        model.load_state_dict(loaded_model.state_dict())
+
+        model = model.eval()
+
+        return model
