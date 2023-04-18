@@ -1,7 +1,7 @@
-from state import StateHandler
+from state_handler.state import StateHandler
 import chess
 import numpy as np
-import config
+import misc.config as config  
 
 class ChessStateHandler(StateHandler):
     def __init__(self, game: chess.Board()=None, to_play=1, turn=0):
@@ -39,7 +39,7 @@ class ChessStateHandler(StateHandler):
 
         return moves_list
     
-    def get_legal_actions_mask(self) -> list:
+    def get_actions_mask(self) -> list:
         pass
 
     def step(self, action) -> None:
@@ -66,11 +66,9 @@ class ChessStateHandler(StateHandler):
             # Create an empty 8x8 NumPy array
             array = np.zeros((8, 8), dtype=int)
             # Iterate through each square on the board
-            print(board)
             for i in range(64):
                 # Get the piece at the current square
                 piece = str(board)[i]
-                print(piece)
                 # If there is a piece at the current square, update the array with the piece's value
                 if piece == ".":
                     continue
@@ -91,7 +89,7 @@ class ChessStateHandler(StateHandler):
         """Returns the player to play"""
         return self.to_play
     
-    def get_all_moves():
+    def get_all_moves(self):
         """Returns all moves, regardless of being possible"""
         return config.ALL_POSSIBLE_MOVES
 
