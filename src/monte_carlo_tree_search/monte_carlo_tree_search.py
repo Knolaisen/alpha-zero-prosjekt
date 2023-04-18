@@ -3,11 +3,13 @@ import math
 from time import time
 import numpy as np
 import torch
+import torch.nn as nn
 from node import Node
 from chess_handler import ChessStateHandler
 from state_handler.state import StateHandler
 import random
 from neural_network import NeuralNet
+from game_data import GameData
 
 
 def monte_carlo_tree_search(root: Node, state_handler: StateHandler, policy, max_itr=0, max_time=0) -> Node:
@@ -20,8 +22,8 @@ def monte_carlo_tree_search(root: Node, state_handler: StateHandler, policy, max
         start_time = time.time()
         while time.time() - start_time < max_time:
             chosen_node: Node = selection(root)
-            created_node = expansion(chosen_node, state_handler)
-            result = simulation(created_node)
+            created_node: Node = expansion(chosen_node, state_handler)
+            result: in = simulation(created_node)
             backpropagation(created_node, result)
     else:
         itr = 0
@@ -141,45 +143,67 @@ def ucb(node: Node):
         np.log(node.get_parent().get_visits())/node.get_visits())
     return exploitation + exploration_parameter*exploration
 
+def softmax(list: list) -> list:
+    """
+    Takes in a list and returns a list with softmax applied to it
+    """
+    exp_list = np.exp(list)
+    sum_exp_list = np.sum(exp_list)
+    result = exp_list/sum_exp_list
+    return result
+
+def get_action_probabilities(node: Node) -> list:
+    """
+    Finds the best move to be done by Monte Carlo by Node.
+    Should return a vector containing all move probabilities.
+    """
+    result = []
+    #Append simulations
+    # TODO: CHECK FOR CORRECT CHILDREN, send children and probability as a pair
+    # Check if we need to add wins over visits, while appending children
+
+    i = 0
+    for action in node.get_state().get_actions_mask():
+        if (action == 1):
+            result.append(node.get_children()[i].get_visits)
+            i += 1
+        else:
+            result.append(action)
+
+    #softmax of result
+    result = softmax(result)
+
+    return result
+
 def generate_test_data(start_node: Node, num_games: int, sims_pr_game: int, board_size: int, model: NeuralNet = None):
+    """
+    
+    """
+    #state = node.get_state().get_board_state()
     # start_node = start_node
     for i in range(num_games):
         node = Node(start_node.getState())
-        game = HexHandler(board_size)
-        monte = MCTS(game, node)
+        game = StateHandler()
         # print("Iteration: " + str(i))
         while not game.is_finished() and node != None:
-            # print()
-            # print("Running tree search")
-            monte.runTreeSearch(sims_per_game, model)
-            player = game.getCurrentPlayer()
-            state = [node.getState()]
+
+            monte_carlo_tree_search(node, game, model)
+            player = game.get_current_player()
+            state = [node.get_state()]
             state = np.asarray(state)
             state = np.insert(state, 0, player)
             # print("state: " + str(state))
-            distribution = MCTS.getActionProb(node)
+            distribution = get_action_probabilities(node)
             distribution = np.asarray(distribution, dtype=np.float32)
             # print("state: " + str(state) + " distribution: " + str(distribution))
-            GameData.addData(state, distribution)
+            GameData.add_data(state, distribution)
+
+            # Why do we need to update best move here?
             best_move_node = MCTS.getBestMove(node)
             game.moveToState(best_move_node)
             # Update the root node to the best_move_node
             monte.root = best_move_node
             node = best_move_node
-
-def get_action_probabilities(node: Node) -> list:
-    """
-    Finds the best move to be done by Monte Carlo by Node.
-    Should return
-    """
-    result = []
-    #softmax of result
-
-    return result
-
-
-
-
 
 if __name__ == "__main__":
     game = ChessStateHandler()
