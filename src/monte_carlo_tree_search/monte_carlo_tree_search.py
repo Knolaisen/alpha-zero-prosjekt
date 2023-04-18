@@ -7,6 +7,7 @@ from node import Node
 from chess_handler import ChessStateHandler
 from state_handler.state import StateHandler
 import random
+from neural_network import NeuralNet
 
 
 def monte_carlo_tree_search(root: Node, state_handler: StateHandler, policy, max_itr=0, max_time=0) -> Node:
@@ -140,6 +141,46 @@ def ucb(node: Node):
         np.log(node.get_parent().get_visits())/node.get_visits())
     return exploitation + exploration_parameter*exploration
 
+def generate_test_data(start_node: Node, num_games: int, sims_pr_game: int, board_size: int, model: NeuralNet = None):
+    # start_node = start_node
+    for i in range(num_games):
+        node = Node(start_node.getState())
+        game = HexHandler(board_size)
+        monte = MCTS(game, node)
+        # print("Iteration: " + str(i))
+        while not game.is_finished() and node != None:
+            # print()
+            # print("Running tree search")
+            monte.runTreeSearch(sims_per_game, model)
+            player = game.getCurrentPlayer()
+            state = [node.getState()]
+            state = np.asarray(state)
+            state = np.insert(state, 0, player)
+            # print("state: " + str(state))
+            distribution = MCTS.getActionProb(node)
+            distribution = np.asarray(distribution, dtype=np.float32)
+            # print("state: " + str(state) + " distribution: " + str(distribution))
+            GameData.addData(state, distribution)
+            best_move_node = MCTS.getBestMove(node)
+            game.moveToState(best_move_node)
+            # Update the root node to the best_move_node
+            monte.root = best_move_node
+            node = best_move_node
+
+def get_action_probabilities(node: Node) -> list:
+    """
+    Finds the best move to be done by Monte Carlo by Node.
+    Should return
+    """
+    result = []
+    #softmax of result
+
+    return result
+
+
+
+
+
 if __name__ == "__main__":
     game = ChessStateHandler()
     node = Node(game.get_state())
@@ -151,4 +192,3 @@ if __name__ == "__main__":
         print(child.get_state())
     print("=====================================")
     print(expanded_node.get_state())
-
