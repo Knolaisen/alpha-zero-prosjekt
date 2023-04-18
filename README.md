@@ -30,3 +30,8 @@ After we have trained and adjusted our AI, we want to show it off! What we have 
 Here at our project we mainly use Python for code. This is because most of the libraries made for machine learning is compatible with Python. It's also very "beginner friendly".
 
 
+## How to start.
+Open the project and write to terminal:
+```
+pip install -e .
+```
