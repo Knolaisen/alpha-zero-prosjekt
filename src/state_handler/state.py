@@ -53,7 +53,7 @@ class StateHandler(ABC):
         pass
 
     @abstractmethod
-    def get_state(self):
+    def get_board_state(self):
         """
         Get the state of the game.
         """

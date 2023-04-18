@@ -38,6 +38,9 @@ class ChessStateHandler(StateHandler):
             moves_list.append(i)
 
         return moves_list
+    
+    def get_legal_actions_mask(self) -> list:
+        pass
 
     def step(self, action) -> None:
         """Takes in a move and performs it on the board"""
@@ -95,4 +98,4 @@ if __name__ == "__main__":
     legal_actions = state.get_legal_actions()
     state.step(legal_actions[0])
     # state.step(legal_actions[1])
-    print(state.get_state())
+    print(state.get_board_state())
