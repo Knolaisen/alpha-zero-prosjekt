@@ -16,7 +16,7 @@ test_dataset: GameData
 train_loader: DataLoader
 test_loader: DataLoader
 
-def updateDatasetAndLoad():
+def updateDatasetAndLoad() -> None:
     """
     Updates the data file with the new data
     """
@@ -33,11 +33,11 @@ def updateDatasetAndLoad():
 model: NeuralNet # TODO: Use the model neural_network.py
 
 # 2) Loss and optimizer
-criterion = nn.CrossEntropyLoss()  # Finnes ulike CrossEntropyLoss - Sjekk ut det
+criterion = nn.CrossEntropyLoss()  # TODO Finnes ulike CrossEntropyLoss - Sjekk ut det
 optimizer = torch.optim.SGD(model.parameters(), lr=config.LEARNING_RATE)
 
 # 3) Training loop
-def train_on_data():
+def train_on_data() -> None:
     for epoch, (features, labels) in enumerate(train_loader):
         # Forward pass
         # Compute Loss
@@ -47,7 +47,7 @@ def train_on_data():
 
         # Print the loss every 100 iterations
         if (epoch + 1) % 100 == 0:
-            print(f'Epoch [{epoch + 1}/{num_epochs}], Step [{i + 1}/{total_step}], Loss: {loss.item():.4f}')
+            print(f'Epoch [{epoch + 1}/{num_epochs}], Step [{epoch + 1}/{total_step}], Loss: {loss.item():.4f}')
     pass
 
 # 4) Test the model
