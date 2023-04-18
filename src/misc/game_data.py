@@ -44,7 +44,9 @@ class GameData(Dataset):
     @staticmethod
     def add_data(game_state: np.ndarray, distribution: np.array) -> None:
         """
-        Adds more data saved file
+        Tar inn np array og lagrer tilstand til brettet 
+        Adds more data saved file 
+
         """
 
         game_state.flatten()
