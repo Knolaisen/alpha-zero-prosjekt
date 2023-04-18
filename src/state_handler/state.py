@@ -32,9 +32,11 @@ class StateHandler(ABC):
         pass
 
     @abstractmethod
-    def get_legal_actions_mask(self) -> list:
+    def get_actions_mask(self) -> list:
         """
-        Get a list of legal action at current game state
+        Get a list of legal action at current game state.
+        Available moves as 1, Illegal 0. 
+        [0,0,1,1,0,1] <- Chessboard
         """
         pass
 
