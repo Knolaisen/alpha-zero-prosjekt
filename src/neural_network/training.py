@@ -1,3 +1,4 @@
+from neural_network.neural_network import NeuralNet
 import torch
 import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
@@ -45,7 +46,7 @@ def train_on_data():
         # Update the model parameters
 
         # Print the loss every 100 iterations
-        if (i + 1) % 100 == 0:
+        if (epoch + 1) % 100 == 0:
             print(f'Epoch [{epoch + 1}/{num_epochs}], Step [{i + 1}/{total_step}], Loss: {loss.item():.4f}')
     pass
 
