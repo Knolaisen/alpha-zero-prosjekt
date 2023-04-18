@@ -6,15 +6,15 @@ from mock_state_handler import mock_state_handler
 
 def test_selection():
     # create parent node
-    parent_node = TreeNode(state=None, parent=None)
+    parent_node = Node(state=None, parent=None)
     # create child nodes with different rewards
-    child1 = TreeNode(state=None, parent=parent_node)
+    child1 = Node(state=None, parent=parent_node)
     child1.set_wins(2)
     child1.set_visits(3)
-    child2 = TreeNode(state=None, parent=parent_node)
+    child2 = Node(state=None, parent=parent_node)
     child2.set_wins(4)
     child2.set_visits(5)
-    child3 = TreeNode(state=None, parent=parent_node)
+    child3 = Node(state=None, parent=parent_node)
     child3.set_wins(1)
     child3.set_visits(2)
     # perform selection
@@ -23,7 +23,7 @@ def test_selection():
     assert best_child == child2
 
 def test_ucb():
-    node = TreeNode(state=None, parent=TreeNode(state=None, parent=None))
+    node = Node(state=None, parent=Node(state=None, parent=None))
     node.set_wins(1)
     node.set_visits(1)
     node.get_parent().set_visits(2)
@@ -31,7 +31,7 @@ def test_ucb():
 
 
 def test_expansion(mock_state_handler):
-    node = TreeNode(state=None, parent=None)
+    node = Node(state=None, parent=None)
     assert len(node.get_children()) == 0
     expansion(node, mock_state_handler)
     assert len(node.get_children()) == 1
@@ -43,13 +43,13 @@ def test_simulation():
     state = mock_state_handler()
     state.is_finished.return_value = True
     state.get_winner.return_value = 1
-    root = TreeNode(state=state, parent=None)
+    root = Node(state=state, parent=None)
     
     # Ensure that the simulation function returns the correct winner for a finished game state
     assert simulation(root) == 1
 
 def test_backpropagation(mock_state_handler):
-    node = TreeNode(state=None, parent=None)
+    node = Node(state=None, parent=None)
     result = 1
     backpropagation(node, result)
     assert node.get_visits() == 1

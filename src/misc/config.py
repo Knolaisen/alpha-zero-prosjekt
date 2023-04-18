@@ -23,4 +23,9 @@ DEVICE: torch.device = torch.device("cuda") if torch.cuda.is_available() else to
 MCTS_DATA_PATH = "src/saved_mcts/"# Path to the folder containing the data
 MODEL_PATH = "src/saved_models/"# Path to the folder containing the models
 
+# ===================== Neural Network settings =====================
+INPUT_SIZE = 12*8*8  # Input size
+HIDDEN_SIZE = 2**10  # Hidden size
+OUTPUT_SIZE = 12*8*8  # Output size
+
 
