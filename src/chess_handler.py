@@ -59,8 +59,7 @@ class ChessStateHandler(StateHandler):
     def get_actions_mask(self) -> list:
         mask = np.zeros(len(config.ALL_POSSIBLE_MOVES))
         for legal_move in self.board.legal_moves:
-            # index = config.ALL_POSSIBLE_MOVES.(str(legal_move))
-            index = np.where(config.ALL_POSSIBLE_MOVES == legal_move) 
+            index = np.where(config.ALL_POSSIBLE_MOVES == str(legal_move)) 
             mask[index] = 1
         return mask
 
