@@ -1,6 +1,7 @@
 import pytest
-from monte_carlo_tree_search.monte_carlo_tree_search import backpropagation, expansion, selection, simulation, ucb
-from monte_carlo_tree_search.node import Node
+from chess_handler import ChessStateHandler
+from mcts import backpropagation, expansion, selection, simulation, ucb, generate_test_data
+from node import Node
 from mock_state_handler import mock_state_handler
 
 
@@ -60,6 +61,23 @@ def test_backpropagation(mock_state_handler):
     assert node.get_visits() == 2
     assert node.get_wins() == 0
 
+def test_mcts(mock_state_handler):
+    # create root node
+    root = Node(state=None, parent=None)
+    # perform MCTS
+
+    # assert that the root node has children
+    assert root.has_children()
+
+def test_generate_test_data():
+    print("Test generate test data:")
+
+    chessHandler = ChessStateHandler()
+    # create root node
+    root = Node(chessHandler)
     
+    generate_test_data(root, 20, 50)
+
 if __name__ == "__main__":
-    test_selection()
+    # test_selection()
+    test_generate_test_data()

@@ -9,7 +9,6 @@ src/misc/TOPP.py
 src/misc/__init__.py
 src/misc/config.py
 src/misc/game_data.py
-src/misc/topp.py
 src/monte_carlo_tree_search/__init__.py
 src/monte_carlo_tree_search/monte_carlo_tree_search.py
 src/monte_carlo_tree_search/node.py

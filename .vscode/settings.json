@@ -1,6 +1,7 @@
 {
     "python.analysis.extraPaths": [
         "./src/misc",
-        "./src/state_handler"
+        "./src/state_handler",
+        "./src"
     ]
 }
