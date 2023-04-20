@@ -167,15 +167,23 @@ def get_action_probabilities(node: Node) -> list:
     # Check if we need to add wins over visits, while appending children
 
     i = 0
+    # print(node.get_state().get_actions_mask())
     for action in node.get_state().get_actions_mask():
+        #
+        #
         if (action == 1):
-            distributions.append(node.get_children()[i].get_visits)
+            # legals = np.where(node.get_state().get_actions_mask()==1)
+            # print(len(legals[0]))
+            # print(len(node.get_children()))
+            # print(i)
+            distributions.append(node.get_children()[i].get_visits())
             i += 1
         else:
-            distributions.append(action)
+            distributions.append(-100)
 
     # Softmax of result
     distributions = softmax(distributions)
+    
     return distributions
 
 def get_best_action(node: Node) -> Node:
