@@ -14,12 +14,17 @@ class ChessStateHandler(StateHandler):
             self.board = game
         self.turn = turn
         self.to_play = to_play
+        self.max_turns = config.MAX_TURNS
 
     def is_finished(self) -> bool:
         """
         Check if the game is finished (e.g. checkmate, stalemate, draw)
         Return True if the game is finished, False otherwise
         """
+        if (len(self.get_legal_actions()) == 0): # TODO refactor
+            return True
+        if (self.max_turns < self.turn):
+            return True
         return (self.board.is_variant_draw() or self.board.is_variant_loss() or self.board.is_variant_win())
 
     def get_winner(self) -> int:
@@ -42,9 +47,13 @@ class ChessStateHandler(StateHandler):
         Return the legal moves as a list
         """
         moves_list = []
-        for i in self.board.legal_moves:
-            moves_list.append(i)
-
+        for move in self.board.legal_moves:
+            to_from_square = str(move.from_square) + str(move.to_square)
+            moves_list.append((to_from_square, move))
+        # sort the list of moves by the to_from_square
+        moves_list.sort(key=lambda x: x[0])
+        # return the list of moves without the to_from_square
+        moves_list = [move[1] for move in moves_list]
         return moves_list
     
     def get_actions_mask(self) -> list:
@@ -61,6 +70,7 @@ class ChessStateHandler(StateHandler):
         """
         self.board.push(action)
         self.to_play = -self.to_play
+        self.turn += 1
 
     def step_back(self):
         """
@@ -68,6 +78,7 @@ class ChessStateHandler(StateHandler):
         """
         self.board.pop()
         self.to_play = -self.to_play
+        self.turn -= 1
 
 
     def get_board_state(self) -> np.array:
@@ -131,3 +142,4 @@ if __name__ == "__main__":
     state.step(legal_actions[0])
     # state.step(legal_actions[1])
     print(state.get_board_state())
+    print(state.get_legal_actions())

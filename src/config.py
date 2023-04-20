@@ -15,6 +15,7 @@ TIME_LIMIT = 10  # Time limit for MCTS
 BATCH_SIZE = 32  # Batch size for training
 NUM_EPOCHS = 10  # Number of epochs to train for
 EPSILON = 0.3 # Epsilon for epsilon greedy
+SIGMA = 0.25 # Sigma for noise
 
 # ================= Hardwaresettings =================
 DEVICE: torch.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
@@ -27,10 +28,12 @@ MODEL_PATH = "./saved_models"# Path to the folder containing the models
 
 
 # ===================== Neural Network settings =====================
-INPUT_SIZE = 12*8*8  # Input size
+
+INPUT_SIZE = 12*8*8 + 1 # Input size
 HIDDEN_SIZE = 2**10  # Hidden size
 OUTPUT_SIZE = 12*8*8  # Output size
 # ====================== Chess Values =======================
+MAX_TURNS = 500  # Max number of turns in a game
 squares = np.array(["a1","a2","a3","a4","a5","a6","a7","a8",
                     "b1","b2","b3","b4","b5","b6","b7","b8",
                     "c1","c2","c3","c4","c5","c6","c7","c8",

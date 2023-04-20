@@ -2,8 +2,10 @@ import torch
 from torch.utils.data import Dataset
 import numpy as np
 import config
+import sys
 file_name = config.MCTS_DATA_PATH + "/data_file.csv"
 
+np.set_printoptions(threshold=sys.maxsize)
 class GameData(Dataset):
     def __init__(self):
         lines = GameData.read_data_file()
@@ -48,7 +50,7 @@ class GameData(Dataset):
         Adds more data saved file 
 
         """
-
+        
         game_state.flatten()
         formatted_data: str = GameData._encode(game_state, distribution)
 

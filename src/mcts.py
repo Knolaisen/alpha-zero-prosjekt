@@ -13,7 +13,7 @@ from game_data import GameData
 import sys
 
 
-def monte_carlo_tree_search(root: Node, state_handler: StateHandler, policy, max_itr=0, max_time=0) -> Node:
+def monte_carlo_tree_search(root: Node, state_handler: StateHandler, sigma: float, policy: NeuralNet =None, max_itr=0, max_time=0) -> Node:
     """
     Runs the monte carlo tree search algorithm.
     If max_itr is 0, it will run until max_time is reached, else it will run for max_itr iterations.
@@ -24,14 +24,14 @@ def monte_carlo_tree_search(root: Node, state_handler: StateHandler, policy, max
         while time.time() - start_time < max_time:
             chosen_node: Node = selection(root)
             created_node: Node = expansion(chosen_node, state_handler)
-            result: int = simulation(created_node)
+            result: int = simulation(created_node, policy) # TODO ADD SIGMA TO SIMULATION
             backpropagation(created_node, result)
     else:
         itr = 0
         while itr < max_itr:
             chosen_node: Node = selection(root)
             created_node = expansion(chosen_node, state_handler)
-            result = simulation(created_node)
+            result = simulation(created_node, policy)
             backpropagation(created_node, result)
             itr += 1
 
@@ -78,39 +78,45 @@ def expansion(node: Node, state_handler: StateHandler) -> Node:
         return node
 
 
-# def defaultPolicy(game: StateHandler, model=None):
-#     '''
-#     choosing moves in simulations/rollout
-#     '''
-#     if model != None:
-#         model_prediction: torch.Tensor = model(game.get_state())
-#         np_arr: np.array = model_prediction.detach().numpy()
-#         best_move = np.argmax(np_arr)
-#         best_move += 1
-#         return best_move
-#     else:
-#         return choose_move(game.get_legal_actions())
-
-
-def choose_move(legal_actions: list):
+def choose_move(game: StateHandler, policy: NeuralNet=None):
     """"
-    Takes in legal moves an chooses one of them at random
+    Chooses a move for the given game. If a policy is given, it will use the policy to choose a move, else it will choose a random move.
     """
-    index = random.randint(0, len(legal_actions)-1)
-    move = legal_actions[index]
+    if policy is not None:
+        move = policy.default_policy(game)
+    else:    
+        legal_actions = game.get_legal_actions()
+        # print("THE INDEX: " +str(len(legal_actions)-1))
+        index = random.randint(0, len(legal_actions)-1)
+        move = legal_actions[index]
     return move
 
 
-def simulation(node: Node) -> int:
+def simulation(node: Node, policy: NeuralNet=None) -> int:
     """
     In this process, a simulation is performed by choosing moves or strategies until a result or predefined state is achieved.
     """
-    state = node.get_state()
-    while state.is_finished():
-        legal_action = state.get_legal_actions()
-        state.step(choose_move(legal_action))  # TODO refactor
+    state = copy.deepcopy(node.get_state())
+    while not state.is_finished():
+        state.step(choose_move(state, policy))  # TODO refactor
 
     return state.get_winner()
+
+# GPT-4 MADNESS
+# def simulation(node: Node, sigma: float, critic: NeuralNet=None) -> int:
+#     """
+#     In this process, a simulation is performed by choosing moves or strategies until a result or predefined state is achieved.
+#     """
+#     state = copy.deepcopy(node.get_state())
+
+#     while not state.is_finished():
+#         state.step(choose_move(state))  # TODO refactor
+
+#     if random.random() < sigma:
+#         return state.get_winner()
+#     else:
+#         estimated_value = critic.predict(state.get_board_state())  # assuming the critic's predict function returns the estimated value of the input state
+#         return estimated_value
 
 
 def backpropagation(node: Node, result: int) -> None:
@@ -204,15 +210,15 @@ def generate_test_data(start_node: Node, num_games: int, sims_pr_game: int, mode
         # game = StateHandler() # Initialize the actual game board (B_a) to an empty board
         print("Iteration: " + str(game_iteration))
         game.render()
+        print("")
         while not game.is_finished() and root != None:
-            # TODO REMOVE
-            monte_carlo_tree_search(root, game, model, sims_pr_game) 
+            monte_carlo_tree_search(root, game, config.SIGMA, model, sims_pr_game) 
             player = game.get_current_player()
 
             state = root.get_state().get_board_state()
             # Add the player to the start point of state
             state = np.insert(state, 0, player)
-            print("Player in state: " + str(player))
+            # print("Player in state: " + str(player))
 
             distribution = get_action_probabilities(root)
             distribution = np.asarray(distribution, dtype=np.float32)
@@ -224,6 +230,7 @@ def generate_test_data(start_node: Node, num_games: int, sims_pr_game: int, mode
             root = best_move_root
             game = root.get_state()
             game.render()
+            print("")
 
 
 if __name__ == "__main__":
@@ -242,6 +249,10 @@ if __name__ == "__main__":
     print("Test generate test data:")
     print(sys.getrecursionlimit())
     chessHandler = ChessStateHandler()
+
+    # Create a Neural Network
+    model = NeuralNet(config.INPUT_SIZE, config.HIDDEN_SIZE, config.OUTPUT_SIZE)
+    
     # create root node
     root = Node(chessHandler)
     
