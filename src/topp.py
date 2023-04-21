@@ -1,7 +1,7 @@
 from chess_handler import ChessStateHandler
 from state import StateHandler
 
-from neural_network import NeuralNet, get_models
+from neural_network import NeuralNet
 import config
 import torch
 
@@ -51,9 +51,9 @@ class TOPP:
 
             move: tuple[int, int]
             if player == start_player:
-                move = MCTS.defaultPolicy(board, modelOne, 0)
+                move = modelOne.defaultPolicy(board, modelOne, 0)
             else:
-                move = MCTS.defaultPolicy(board, modelTwo, 0)
+                move = modelTwo.defaultPolicy(board, modelTwo, 0)
             board.step(move)
 
         winner = board.get_winner()
