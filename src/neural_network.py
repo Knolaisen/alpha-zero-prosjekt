@@ -14,7 +14,7 @@ class NeuralNet(nn.Module):
             nn.BatchNorm2d(num_filters),
             nn.ReLU(inplace=True)
         )
-
+        # Residual blocks are used to make the network deeper and more powerful but 
         self.residual_blocks = nn.Sequential(*[ResidualBlock(num_filters, num_filters, kernel_size=3, padding=1) for _ in range(num_residual_blocks)])
 
         self.policy_head = nn.Sequential(
@@ -126,6 +126,9 @@ class NeuralNet(nn.Module):
         return model
 
 class ResidualBlock(nn.Module):
+    """
+    
+    """
     def __init__(self, in_channels, out_channels, kernel_size, padding):
         super(ResidualBlock, self).__init__()
         self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size, padding=padding)
@@ -144,20 +147,6 @@ class ResidualBlock(nn.Module):
         out += residual
         out = self.relu(out)
         return out
-
-class TestNet(nn.Module):
-    def __init__(self) -> None:
-        super(TestNet, self).__init__()
-        self.input_layer = nn.Linear(65, 256)
-        self.hidden_layer = nn.Linear(256, 256)
-        self.output_layer = nn.Linear(256, 64)
-    
-    def forward(self, x: torch.Tensor):
-        x = self.input_layer(x)
-        x = self.hidden_layer(x)
-        x = self.output_layer(x)
-        return x
-
 
 
 if __name__ == "__main__":
