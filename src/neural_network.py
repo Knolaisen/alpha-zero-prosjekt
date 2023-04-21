@@ -10,7 +10,7 @@ class NeuralNet(nn.Module):
         super(NeuralNet, self).__init__()
 
         self.input_conv = nn.Sequential(
-            nn.Conv2d(config.INPUT_SIZE, num_filters, kernel_size=3, padding=1), # 65 because of the 64 board positions and the 1 turn indicator
+            nn.Conv2d(config.INPUT_SIZE, num_filters, kernel_size=(3, 1), padding=(1, 0)),
             nn.BatchNorm2d(num_filters),
             nn.ReLU(inplace=True)
         )
@@ -22,7 +22,7 @@ class NeuralNet(nn.Module):
             nn.BatchNorm2d(2),
             nn.ReLU(inplace=True),
             nn.Flatten(),
-            nn.Linear(2 * 8 * 8, config.OUTPUT_SIZE), # 64 * 64 = 4096, 4096 - 64 = 4032, from possible moves
+            nn.Linear(2 * 65 * 1, config.OUTPUT_SIZE),
             nn.Softmax(dim=1)
         )
 
@@ -31,13 +31,13 @@ class NeuralNet(nn.Module):
             nn.BatchNorm2d(1),
             nn.ReLU(inplace=True),
             nn.Flatten(),
-            nn.Linear(8 * 8, 256),
+            nn.Linear(config.INPUT_SIZE , 256),
             nn.ReLU(inplace=True),
             nn.Linear(256, 1),
             nn.Tanh()
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor):
         x = self.input_conv(x)
         x = self.residual_blocks(x)
         policy = self.policy_head(x)
@@ -67,7 +67,7 @@ class NeuralNet(nn.Module):
             index = np.argmax(np_arr)
             return index
     
-    def softmax(x) -> np.array:
+    def softmax(x: torch.Tensor ) -> np.array:
         # Subtract the maximum value to avoid numerical issues with large exponents
         e_x = np.exp(x - np.max(x))
 
@@ -81,10 +81,14 @@ class NeuralNet(nn.Module):
         """
 
         state = game.get_board_state()
+        state = state.flatten()
+        # Add the turn indicator
+        state = np.insert(state, 0, game.get_current_player())
+        # state = np.expand_dims(state, axis=0)  # Add the batch dimension
+        # state = np.expand_dims(state, axis=(0,1))  # Add the batch dimension
 
-        state = np.expand_dims(state, axis=0)  # Add the batch dimension
         state: torch.Tensor = torch.from_numpy(state).float().to(config.DEVICE)
-        
+        print("State: ", state)
         # Find the correct move from the legal games and return it
         # Use the mask and legal moves to find the correct move
         legal_moves = game.get_legal_actions()
@@ -121,7 +125,6 @@ class NeuralNet(nn.Module):
 
         return model
 
-
 class ResidualBlock(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, padding):
         super(ResidualBlock, self).__init__()
@@ -141,3 +144,39 @@ class ResidualBlock(nn.Module):
         out += residual
         out = self.relu(out)
         return out
+
+class TestNet(nn.Module):
+    def __init__(self) -> None:
+        super(TestNet, self).__init__()
+        self.input_layer = nn.Linear(65, 256)
+        self.hidden_layer = nn.Linear(256, 256)
+        self.output_layer = nn.Linear(256, 64)
+    
+    def forward(self, x: torch.Tensor):
+        x = self.input_layer(x)
+        x = self.hidden_layer(x)
+        x = self.output_layer(x)
+        return x
+
+
+
+if __name__ == "__main__":
+    # model = NeuralNet()
+    # x = torch.randn(65)
+    # out = model(x)
+    # print(out)
+
+
+
+    array_1d = np.random.randn(65)
+    # Reshape the 1D array into a 4D tensor with shape (1, 1, 65, 1):
+    # array_4d = array_1d.reshape(256, 65, 1, 1)
+    # Foremat when reshape: (batch_size, num_channels, height, width)
+    array_3d = np.stack([array_1d] * 65, axis=0)
+    array_4d = array_3d.reshape(1, 65, 65, 1)
+    # Convert the 4D NumPy array to a PyTorch tensor:
+    input_tensor = torch.from_numpy(array_4d).float()
+    # Create an instance of the NeuralNet class and pass the input tensor to it:
+    model = NeuralNet()
+    output = model(input_tensor)
+    print(output)
