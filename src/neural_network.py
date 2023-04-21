@@ -44,28 +44,6 @@ class NeuralNet(nn.Module):
         value = self.value_head(x)
         return policy, value
     
-    def get_best_move_index(self, state: torch.Tensor, game: StateHandler) -> int:
-        """Get the best move from the model"""
-        # Disable gradient calculation to speed up the process
-        with torch.no_grad():
-            print("Getting best move")
-            print("State: ", state)
-            output: torch.Tensor = self(state)
-            
-            # Convert to numpy array and by correct device
-            np_arr: np.array
-            if config.DEVICE == "cuda":
-                np_arr: np.array = output.detach().cuda().numpy().astype(np.float32)
-            else:
-                np_arr: np.array = output.detach().cpu().numpy().astype(np.float32)
-
-            # Compute softmax
-            result = NeuralNet.softmax(np_arr)
-            # Mask the array with the actions that are not allowed
-            np_arr = result * game.get_actions_mask()
-            # Get the index of the best move
-            index = np.argmax(np_arr)
-            return index
     
     def softmax(x: torch.Tensor ) -> np.array:
         # Subtract the maximum value to avoid numerical issues with large exponents
@@ -81,14 +59,16 @@ class NeuralNet(nn.Module):
         """
 
         state = game.get_board_state()
+
         state = state.flatten()
         # Add the turn indicator
         state = np.insert(state, 0, game.get_current_player())
-        # state = np.expand_dims(state, axis=0)  # Add the batch dimension
-        # state = np.expand_dims(state, axis=(0,1))  # Add the batch dimension
+        
+        # state: torch.Tensor = torch.from_numpy(state).float().to(config.DEVICE)
+        state: torch.Tensor = transform_2d_to_tensor(game).to(config.DEVICE)
 
-        state: torch.Tensor = torch.from_numpy(state).float().to(config.DEVICE)
-        print("State: ", state)
+
+        # print("State: ", state)
         # Find the correct move from the legal games and return it
         # Use the mask and legal moves to find the correct move
         legal_moves = game.get_legal_actions()
@@ -105,6 +85,31 @@ class NeuralNet(nn.Module):
 
         best_move = legal_moves[converted_index]
         return best_move
+
+    def get_best_move_index(self, state: torch.Tensor, game: StateHandler) -> int:
+        """Get the best move from the model"""
+        # Disable gradient calculation to speed up the process
+        with torch.no_grad():
+            # print("Getting best move")
+            # print("State: ", state)
+            output: torch.Tensor = self(state)
+            output = output[0]
+            # print("Output: ", output)
+            
+            # Convert to numpy array and by correct device
+            np_arr: np.array
+            if config.DEVICE == "cuda":
+                np_arr: np.array = output.detach().cuda().numpy().astype(np.float32)
+            else:
+                np_arr: np.array = output.detach().cpu().numpy().astype(np.float32)
+
+            # Compute softmax
+            result = NeuralNet.softmax(np_arr)
+            # Mask the array with the actions that are not allowed
+            np_arr = result * game.get_actions_mask()
+            # Get the index of the best move
+            index = np.argmax(np_arr)
+            return index
 
     def save_model(self, iteration: int, simulations: int) -> None:
         """Save the model to a file"""
@@ -148,6 +153,25 @@ class ResidualBlock(nn.Module):
         out = self.relu(out)
         return out
 
+
+def transform_2d_to_tensor(game: StateHandler, features: np.array= None) -> torch.Tensor:
+    '''
+    Tranforms the board state from 2d to a tensor.
+    '''
+    if features is None:
+        features = game.get_board_state()
+    features = features.flatten()
+
+    player_id = game.get_current_player()
+    # Add player as first place in array
+    features = np.insert(features, 0, player_id)
+
+    # Add player to 
+    array_3d = np.stack([features] * config.INPUT_SIZE, axis=0)
+    array_4d = array_3d.reshape(1, config.INPUT_SIZE, config.INPUT_SIZE, 1)
+    # Convert the 4D NumPy array to a PyTorch tensor:
+    input_tensor = torch.from_numpy(array_4d).float()
+    return input_tensor
 
 if __name__ == "__main__":
     # model = NeuralNet()

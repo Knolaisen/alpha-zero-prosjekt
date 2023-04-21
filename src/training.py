@@ -84,8 +84,10 @@ def trainOnData():
         features = features.to(device)
         labels = labels.to(device)
 
+        print(f"features.shape = {features.shape}")
         # forward pass
-        output = model(features)
+        
+        output = model(transform_2d_to_tensor(features))
         loss = criterion(output, labels)
 
         # backward

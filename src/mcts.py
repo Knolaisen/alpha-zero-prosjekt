@@ -9,6 +9,7 @@ from chess_handler import ChessStateHandler
 from state import StateHandler
 import random
 from neural_network import NeuralNet
+import torch
 from game_data import GameData
 import sys
 
@@ -185,7 +186,7 @@ def get_action_probabilities(node: Node) -> list:
     distributions = softmax(distributions)
     
     return distributions
-
+    
 def get_best_action(node: Node) -> Node:
     """
     Finds the best move to be done by Monte Carlo by Node.
