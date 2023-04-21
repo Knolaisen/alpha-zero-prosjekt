@@ -31,7 +31,7 @@ MODEL_PATH = "./saved_models"# Path to the folder containing the models
 
 INPUT_SIZE = 8*8 + 1 # Input size
 HIDDEN_SIZE = 2**10  # Hidden size
-OUTPUT_SIZE = 12*8*8  # Output size
+OUTPUT_SIZE = 63*64  # Output size
 # ====================== Chess Values =======================
 MAX_TURNS = 100  # Max number of turns in a game
 

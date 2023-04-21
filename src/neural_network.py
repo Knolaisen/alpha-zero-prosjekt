@@ -10,7 +10,7 @@ class NeuralNet(nn.Module):
         super(NeuralNet, self).__init__()
 
         self.input_conv = nn.Sequential(
-            nn.Conv2d(65, num_filters, kernel_size=3, padding=1), # 65 because of the 64 board positions and the 1 turn indicator
+            nn.Conv2d(config.INPUT_SIZE, num_filters, kernel_size=3, padding=1), # 65 because of the 64 board positions and the 1 turn indicator
             nn.BatchNorm2d(num_filters),
             nn.ReLU(inplace=True)
         )
@@ -22,7 +22,7 @@ class NeuralNet(nn.Module):
             nn.BatchNorm2d(2),
             nn.ReLU(inplace=True),
             nn.Flatten(),
-            nn.Linear(2 * 8 * 8, 4032), # 64 * 64 = 4096, 4096 - 64 = 4032, from possible moves
+            nn.Linear(2 * 8 * 8, config.OUTPUT_SIZE), # 64 * 64 = 4096, 4096 - 64 = 4032, from possible moves
             nn.Softmax(dim=1)
         )
 
@@ -144,5 +144,6 @@ class ResidualBlock(nn.Module):
 
 if __name__ == "__main__":
     model = NeuralNet(config.INPUT_SIZE, config.HIDDEN_SIZE, config.OUTPUT_SIZE)
+    # model = NeuralNet(config.INPUT_SIZE, config.HIDDEN_SIZE, config.OUTPUT_SIZE)
     model.save_model(1, 1)
     model.load_model("model_1_1.pt")
