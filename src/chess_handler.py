@@ -91,11 +91,11 @@ class ChessStateHandler(StateHandler):
 
         # Define piece values
         piece_values = {
-            "P": 1, "N": 2, "B": 3, "R": 4, "Q": 5, "K": 6,
-            "p": -1, "n": -2, "b": -3, "r": -4, "q": -5, "k": -6
+            "P": 1.0, "N": 2.0, "B": 3.0, "R": 4.0, "Q": 5.0, "K": 6.0,
+            "p": -1.0, "n": -2.0, "b": -3.0, "r": -4.0, "q": -5.0, "k": -6.0
         }
         # Create an empty 8x8 NumPy array
-        array = np.zeros((8, 8), dtype=int)
+        array = np.zeros((8, 8), dtype=float)
         # Iterate through each square on the board
         for i in range(64):
             # Get the piece at the current square
