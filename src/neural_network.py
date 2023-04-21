@@ -6,7 +6,7 @@ import config as config
 from state import StateHandler
 
 class NeuralNet(nn.Module):
-    def __init__(self, num_residual_blocks=19, num_filters=256):
+    def __init__(self, num_residual_blocks=config.NUM_RESIDUAL_BLOCKS, num_filters=config.NUM_FILTERS):
         super(NeuralNet, self).__init__()
 
         self.input_conv = nn.Sequential(
@@ -141,9 +141,3 @@ class ResidualBlock(nn.Module):
         out += residual
         out = self.relu(out)
         return out
-
-if __name__ == "__main__":
-    model = NeuralNet(config.INPUT_SIZE, config.HIDDEN_SIZE, config.OUTPUT_SIZE)
-    # model = NeuralNet(config.INPUT_SIZE, config.HIDDEN_SIZE, config.OUTPUT_SIZE)
-    model.save_model(1, 1)
-    model.load_model("model_1_1.pt")

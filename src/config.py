@@ -30,8 +30,10 @@ MODEL_PATH = "./saved_models"# Path to the folder containing the models
 # ===================== Neural Network settings =====================
 
 INPUT_SIZE = 8*8 + 1 # Input size
-HIDDEN_SIZE = 2**10  # Hidden size
-OUTPUT_SIZE = 63*64  # Output size
+OUTPUT_SIZE = 63*64  # Output siz
+
+NUM_RESIDUAL_BLOCKS = 19 # Number of residual blocks in the neural network
+NUM_FILTERS = 256 # Number of filters in the residual blocks 
 # ====================== Chess Values =======================
 MAX_TURNS = 100  # Max number of turns in a game
 
