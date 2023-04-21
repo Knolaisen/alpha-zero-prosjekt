@@ -56,8 +56,8 @@ def updateDatasetAndLoad():
     global test_dataset
     global train_loader
     global test_loader
-    train_dataset = GameData(train=True)
-    test_dataset = GameData(train=False)
+    train_dataset = GameData()
+    test_dataset = GameData()
     train_loader = DataLoader(dataset=train_dataset)
     test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size)
 
