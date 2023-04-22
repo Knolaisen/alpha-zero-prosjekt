@@ -154,7 +154,7 @@ class ResidualBlock(nn.Module):
         return out
 
 
-def transform_2d_to_tensor(game: StateHandler, features: np.array= None) -> torch.Tensor:
+def transform_2d_to_tensor(game: StateHandler = None, features: np.array= None) -> torch.Tensor:
     '''
     Tranforms the board state from 2d to a tensor.
     '''
@@ -178,8 +178,6 @@ if __name__ == "__main__":
     # x = torch.randn(65)
     # out = model(x)
     # print(out)
-
-
 
     array_1d = np.random.randn(65)
     # Reshape the 1D array into a 4D tensor with shape (1, 1, 65, 1):

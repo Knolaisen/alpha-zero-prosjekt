@@ -18,7 +18,7 @@ EPSILON = 0.3 # Epsilon for epsilon greedy
 SIGMA = 0.25 # Sigma for noise
 
 # ================= Hardwaresettings =================
-DEVICE: torch.device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+DEVICE: torch.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # ====================== Paths =======================
 
