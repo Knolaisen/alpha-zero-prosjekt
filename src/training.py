@@ -16,28 +16,6 @@ import cProfile
 from pstats import SortKey
 import pstats
 
-# GPU config
-
-
-def get_default_device() -> torch.device:
-    """Pick GPU if available, else CPU"""
-    if torch.cuda.is_available():
-        return torch.device("cuda")
-    else:
-        return torch.device("cpu")
-
-
-# def train_model(model, train_loader, test_loader, loss_fn, optimizer, n_epochs=1):
-device = get_default_device()
-
-
-# Hyperparameters
-
-player_id_len = 1
-hidden_size = 128
-num_epochs = 10
-batch_size = 4  # spørsmål?
-learning_rate = config.LEARNING_RATE
 
 # 0) Data processing
 train_dataset: GameData
@@ -57,30 +35,25 @@ def updateDatasetAndLoad():
     train_dataset = GameData()
     test_dataset = GameData()
     train_loader = DataLoader(dataset=train_dataset)
-    test_loader = DataLoader(dataset=test_dataset, batch_size=batch_size)
+    test_loader = DataLoader(dataset=test_dataset, batch_size=config.BATCH_SIZE)
 
 
 # 1) Model
 
-model = NeuralNet(
-    # config.INPUT_SIZE,
-    # config.HIDDEN_SIZE,
-    # # config.hidden_size1,
-    # # config.hidden_size2,
-    # # config.hidden_size3,
-    # config.OUTPUT_SIZE,
-).to(device)
+model = NeuralNet().to(config.DEVICE)
 
 # 2) Loss and optimizer
 
 criterion = nn.CrossEntropyLoss()  # Finnes ulike CrossEntropyLoss - Sjekk ut det
-optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate)
+# There are many options of optimizers: Adagrad, Stochastic Gradient Descent (SGD), RMSProp, and Adam.
+# We should try out different optimizers and see which one works best.
+optimizer = torch.optim.SGD(model.parameters(), lr=config.LEARNING_RATE)
 
 
 def train_on_data(game: StateHandler):
     for i, (features, labels) in enumerate(train_loader):
-        features = features.to(device)
-        labels = labels.to(device)
+        features = features.to(config.DEVICE)
+        labels = labels.to(config.DEVICE)
 
         print(f"features.shape = {features.shape}")
         # forward pass
@@ -101,14 +74,12 @@ def train_on_data(game: StateHandler):
     config.epsilon *= config.epsilon_decay
 
 
-def train_ANET(iteration: int, simuations: int):
+def train_ANET(iteration: int, simulations: int):
     """
     Trains the ANET model and saves the model to saved_models folder.
     Returns the trained model and the differnte trained versions of the model.
     """
-
-    device = get_default_device()
-    print("[DEVICE]: " + str(device))
+    print("[DEVICE]: " + str(config.DEVICE))
     game = ChessStateHandler()
     root = Node(game)
 
@@ -117,7 +88,7 @@ def train_ANET(iteration: int, simuations: int):
         print(f"Iteration: {i + 1} of {config.EPISODES}")
         GameData.clear_data_file()
         generate_test_data(
-            root, iteration, simuations, model
+            root, iteration, simulations, model
         )  # TODO Model not defined in train_ANET
         updateDatasetAndLoad()
         train_on_data(root.get_state())
@@ -127,7 +98,7 @@ def train_ANET(iteration: int, simuations: int):
         if i % (config.EPISODES // (config.M - 1)) == 0 or (i == (config.EPISODES - 1)):
             # if i % (config.episodes // (config.M - 2)) == 0:
             print("[INFO] Saving model...")
-            model.saveModel(i, simuations)
+            model.saveModel(i, simulations)
             batch_model = copy.deepcopy(model)
             cached_models.append(batch_model)
             print("[INFO] Model saved!")
@@ -161,9 +132,9 @@ if __name__ == "__main__":
     """
     model = NeuralNet(50, 128, 49)
     trained_model = NeuralNet.loadModel(
-        model, 7, 100, 500).to(get_default_device())
+        model, 7, 100, 500).to(get_default_config.DEVICE())
 
-    test_case = torch.Tensor([1, 0, -1, 1, 0]).to(get_default_device())
+    test_case = torch.Tensor([1, 0, -1, 1, 0]).to(get_default_config.DEVICE())
 
     result = trained_model(test_case)
 

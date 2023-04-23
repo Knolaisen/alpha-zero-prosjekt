@@ -17,6 +17,16 @@ NUM_EPOCHS = 10  # Number of epochs to train for
 EPSILON = 0.3 # Epsilon for epsilon greedy
 SIGMA = 0.25 # Sigma for noise
 
+# ============= Validate Training params =============
+for i in range(EPISODES):
+    try:
+
+        (i % (EPISODES // (M - 1)) == 0 or (i == (EPISODES - 1)))
+    except ZeroDivisionError as e:
+        print("[ERROR] Number of episodes must be divisible by (M - 1) or (EPISODES - 1)")
+        print("[HINT]  Models must be lower than the number of episodes")
+        print("[TERMINATING] Please change the value of EPISODES or M")
+        exit()
 # ================= Hardwaresettings =================
 DEVICE: torch.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
