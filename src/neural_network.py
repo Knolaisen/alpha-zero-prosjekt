@@ -44,6 +44,13 @@ class NeuralNet(nn.Module):
         value = self.value_head(x)
         return policy, value
     
+    def predict(self, state: StateHandler) -> float:
+        """
+        Predicts the value of the given state using the neural network. 
+        """
+        x: torch.Tensor = transform_2d_to_tensor(state).to(config.DEVICE)
+        value = self.forward(x)[1] # Get the value from the forward pass
+        return value.item()
     
     def softmax(x: torch.Tensor ) -> np.array:
         # Subtract the maximum value to avoid numerical issues with large exponents
@@ -191,3 +198,4 @@ if __name__ == "__main__":
     model = NeuralNet()
     output = model(input_tensor)
     print(output)
+

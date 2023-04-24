@@ -108,6 +108,9 @@ class Node():
 
     def has_parent(self) -> bool:
         return self._parent != None
+    
+    def remove_parent(self) -> None:
+        self._parent = None
 
     def add_visits(self) -> None:
         self._visits += 1

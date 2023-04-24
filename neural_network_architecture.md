@@ -12,7 +12,7 @@ bypassing one or more layers in between.
     
 To learn more one can read the the paper "Deep Residual Learning for Image Recognition" by Kaiming He et al (2015).
 
-We chose to immitate AlphaZero and we have 20 residual blocks in our net
+We chose to imitate AlphaZero and we have 20 residual blocks in our net
 
 
 

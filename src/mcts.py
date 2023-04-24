@@ -8,7 +8,7 @@ from node import Node
 from chess_handler import ChessStateHandler
 from state import StateHandler
 import random
-from neural_network import NeuralNet
+from neural_network import NeuralNet, transform_2d_to_tensor
 import torch
 from game_data import GameData
 import sys
@@ -101,23 +101,11 @@ def simulation(node: Node, policy: NeuralNet=None) -> int:
     while not state.is_finished():
         state.step(choose_move(state, policy))  # TODO refactor
 
+        if random.random() < config.SIGMA and policy is not None:
+            predicted_winner = policy.predict(state) # TODO: CHECK IF THIS IS UNDERSTANDABLE BY OTHERS
+            print("Winner: " + str(predicted_winner) + " or as " + str(int(predicted_winner)))
+            return int(predicted_winner)
     return state.get_winner()
-
-# GPT-4 MADNESS
-# def simulation(node: Node, sigma: float, critic: NeuralNet=None) -> int:
-#     """
-#     In this process, a simulation is performed by choosing moves or strategies until a result or predefined state is achieved.
-#     """
-#     state = copy.deepcopy(node.get_state())
-
-#     while not state.is_finished():
-#         state.step(choose_move(state))  # TODO refactor
-
-#     if random.random() < sigma:
-#         return state.get_winner()
-#     else:
-#         estimated_value = critic.predict(state.get_board_state())  # assuming the critic's predict function returns the estimated value of the input state
-#         return estimated_value
 
 
 def backpropagation(node: Node, result: int) -> None:
@@ -237,6 +225,8 @@ def generate_test_data(start_node: Node, num_games: int, sims_pr_game: int, mode
             # Choose actual move (a*) based on distribution
             best_move_root: Node = get_best_action(root)
             root = best_move_root
+            # Remove parent from root
+            root.remove_parent()
             game = root.get_state()
             game.render()
             print("")
@@ -260,9 +250,9 @@ if __name__ == "__main__":
     chessHandler = ChessStateHandler()
 
     # Create a Neural Network
-    model = NeuralNet(config.INPUT_SIZE, config.HIDDEN_SIZE, config.OUTPUT_SIZE)
+    model = NeuralNet()
     
     # create root node
     root = Node(chessHandler)
     
-    generate_test_data(root, config.MCTS_GAMES, config.MCTS_SIMULATIONS)
+    generate_test_data(root, config.MCTS_GAMES, config.MCTS_SIMULATIONS, model)
