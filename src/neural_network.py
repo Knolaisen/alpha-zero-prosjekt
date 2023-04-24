@@ -1,4 +1,5 @@
 
+import random
 import torch
 import torch.nn as nn
 import numpy as np
@@ -64,6 +65,9 @@ class NeuralNet(nn.Module):
         """
         Default policy finds the best move from the model
         """
+        if random.random() < config.EPSILON:
+            # Random move
+            return random.choice(game.get_legal_actions())
 
         state = game.get_board_state()
 
