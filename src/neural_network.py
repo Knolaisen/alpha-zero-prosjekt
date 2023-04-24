@@ -63,7 +63,7 @@ class NeuralNet(nn.Module):
     
     def default_policy(self, game: StateHandler) -> any:
         """
-        Default policy finds the best move from the model
+        Default policy finds the best move from the model, but with a chance of random move to explore the tree
         """
         if random.random() < config.EPSILON:
             # Random move
