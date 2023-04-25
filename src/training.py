@@ -16,6 +16,7 @@ import cProfile
 from pstats import SortKey
 import pstats
 
+sys.setrecursionlimit(5000)
 
 # 0) Data processing
 train_dataset: GameData
@@ -44,6 +45,13 @@ model = NeuralNet().to(config.DEVICE)
 
 # 2) Loss and optimizer
 
+policy_loss = nn.CrossEntropyLoss()
+value_loss = nn.MSELoss()
+
+def alpha_zero_loss(policy_pred, MCTS_policy_prob, value_pred, MCTS_value):
+   return policy_loss(policy_pred, MCTS_policy_prob) + value_loss (value_pred, MCTS_value)
+
+
 criterion = nn.CrossEntropyLoss()  # Finnes ulike CrossEntropyLoss - Sjekk ut det
 # There are many options of optimizers: Adagrad, Stochastic Gradient Descent (SGD), RMSProp, and Adam.
 # We should try out different optimizers and see which one works best.
@@ -57,7 +65,8 @@ def train_on_data():
 
         # forward pass
         output = model(transform_2d_to_tensor(features=features))
-        loss = criterion(output[0], labels)
+        loss = alpha_zero_loss(output[0], features, output[1], labels)
+        # loss = criterion(output[0], labels)
 
         # backward
         optimizer.zero_grad()

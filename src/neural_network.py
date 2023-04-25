@@ -11,7 +11,7 @@ class NeuralNet(nn.Module):
         super(NeuralNet, self).__init__()
 
         self.input_conv = nn.Sequential(
-            nn.Conv2d(config.INPUT_SIZE, num_filters, kernel_size=(3, 1), padding=(1, 0)),
+            nn.Conv2d(config.INPUT_SIZE, num_filters, kernel_size=(3, 3), padding=(1, 0)),
             nn.BatchNorm2d(num_filters),
             nn.ReLU(inplace=True)
         )
@@ -72,8 +72,6 @@ class NeuralNet(nn.Module):
         state = state.flatten()
         # Add the turn indicator
         state = np.insert(state, 0, game.get_current_player())
-        
-        # state: torch.Tensor = torch.from_numpy(state).float().to(config.DEVICE)
         state: torch.Tensor = transform_2d_to_tensor(game).to(config.DEVICE)
 
         # print("State: ", state)
@@ -179,7 +177,7 @@ def transform_2d_to_tensor(game: StateHandler = None, features: np.array= None) 
     array_3d = np.stack([features] * config.INPUT_SIZE, axis=0)
     array_4d = array_3d.reshape(1, config.INPUT_SIZE, config.INPUT_SIZE, 1)
     # Convert the 4D NumPy array to a PyTorch tensor:
-    input_tensor = (torch.from_numpy(array_4d).float())
+    input_tensor = (torch.from_numpy(array_4d).float().to(config.DEVICE))
     return input_tensor
 
 if __name__ == "__main__":
