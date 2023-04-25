@@ -11,7 +11,7 @@ class NeuralNet(nn.Module):
         super(NeuralNet, self).__init__()
 
         self.input_conv = nn.Sequential(
-            nn.Conv2d(config.INPUT_SIZE, num_filters, kernel_size=(3, 3), padding=(1, 0)),
+            nn.Conv2d(config.INPUT_SIZE, num_filters, kernel_size=(3, 1), padding=(1, 0)),
             nn.BatchNorm2d(num_filters),
             nn.ReLU(inplace=True)
         )

@@ -14,7 +14,7 @@ from game_data import GameData
 import sys
 
 
-def monte_carlo_tree_search(root: Node, policy: NeuralNet=None, max_itr=0, max_time=0) -> Node:
+def monte_carlo_tree_search(root: Node, state_handler: StateHandler, sigma: float, policy: NeuralNet =None, max_itr=0, max_time=0) -> Node:
     """
     Runs the monte carlo tree search algorithm.
     If max_itr is 0, it will run until max_time is reached, else it will run for max_itr iterations.
@@ -74,7 +74,6 @@ def expansion(node: Node) -> Node:
         child_node = Node(copy.deepcopy(state_handler))
         node.add_child(child_node)
         state_handler.step_back()
-        print("Sverre")
         return child_node
     else:
         while True:
@@ -228,7 +227,7 @@ def get_best_action(node: Node) -> Node:
     
     return best_node
 
-def generate_test_data(start_node: Node, num_games: int, sims_pr_game: int, model: NeuralNet = None):
+def generate_test_data(start_node: Node, num_games: int, rounds: int, model: NeuralNet = None):
     """
     Generates test data for the neural network
     """
@@ -244,7 +243,7 @@ def generate_test_data(start_node: Node, num_games: int, sims_pr_game: int, mode
         print("")
         
         while not game.is_finished() and root != None:
-            monte_carlo_tree_search(root, model, sims_pr_game) 
+            monte_carlo_tree_search(root, game, config.SIGMA, model, rounds) 
             player = game.get_current_player()
 
             state = root.get_state().get_board_state()

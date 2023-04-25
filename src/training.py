@@ -59,17 +59,21 @@ optimizer = torch.optim.SGD(model.parameters(), lr=config.LEARNING_RATE)
 
 
 def train_on_data():
+    '''
+    
+    '''
     for i, (features, labels) in enumerate(train_loader):
         features = features.to(config.DEVICE)
         labels = labels.to(config.DEVICE)
 
         # forward pass
         output = model(transform_2d_to_tensor(features=features))
-        loss = alpha_zero_loss(output[0], features, output[1], labels)
-        # loss = criterion(output[0], labels)
+        #loss = alpha_zero_loss(output[0], features, output[1], labels)
+        loss = criterion(output[0], labels)
 
         # backward
         optimizer.zero_grad()
+        
         loss.backward()
         optimizer.step()
 
@@ -78,7 +82,7 @@ def train_on_data():
             print(f"loss = {loss.item(): .4f}")
 
 
-def train_ANET(iteration: int, playouts: int):
+def train_ANET(iteration: int, rounds: int):
     """
     Trains the ANET model and saves the model to saved_models folder.
     Returns the trained model and the differnte trained versions of the model.
@@ -92,7 +96,7 @@ def train_ANET(iteration: int, playouts: int):
         print(f"Iteration: {i + 1} of {config.EPISODES}")
         GameData.clear_data_file()
         generate_test_data(
-            root, iteration, playouts, model
+            root, iteration, rounds, model
         )  # TODO Model not defined in train_ANET
         updateDatasetAndLoad()
         train_on_data()
@@ -102,7 +106,7 @@ def train_ANET(iteration: int, playouts: int):
         if i % (config.EPISODES // (config.M - 1)) == 0 or (i == (config.EPISODES - 1)):
             # if i % (config.episodes // (config.M - 2)) == 0:
             print("[INFO] Saving model...")
-            model.save_model(i, playouts, config.NUM_RESIDUAL_BLOCKS, config.NUM_FILTERS)
+            model.save_model(i, rounds, config.NUM_RESIDUAL_BLOCKS, config.NUM_FILTERS)
             batch_model = copy.deepcopy(model)
             cached_models.append(batch_model)
             print("[INFO] Model saved!")
