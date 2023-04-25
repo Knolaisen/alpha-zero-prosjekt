@@ -1,9 +1,11 @@
+import sys
 import config
 from topp import TOPP
 from training import train_ANET
 from torch import torch
 from neural_network import NeuralNet
 
+sys.setrecursionlimit(5000)
 
 models = train_ANET(config.MCTS_GAMES, config.MCTS_SIMULATIONS)
 print("[INFO] Running TOPP...")
