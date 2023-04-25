@@ -89,13 +89,22 @@ def choose_move(game: StateHandler, policy: NeuralNet=None):
     Chooses a move for the given game. If a policy is given, it will use the policy to choose a move, else it will choose a random move.
     """
     if policy is not None:
-        move = policy.default_policy(game, True)
+        if random.random() < config.EPSILON:
+            move = make_random_move(game)
+        else:
+            move = policy.default_policy(game, True)
     else:    
-        legal_actions = game.get_legal_actions()
-        index = random.randint(0, len(legal_actions)-1)
-        move = legal_actions[index]
+        move = make_random_move(game)
     return move
 
+def make_random_move(game: StateHandler):
+    """
+    Chooses a random move for the given game.
+    """
+    legal_actions = game.get_legal_actions()
+    index = random.randint(0, len(legal_actions)-1)
+    move = legal_actions[index]
+    return move
 
 def simulation(node: Node, policy: NeuralNet=None) -> int:
     """
