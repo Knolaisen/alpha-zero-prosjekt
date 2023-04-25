@@ -69,7 +69,7 @@ def train_on_data():
             print(f"loss = {loss.item(): .4f}")
 
 
-def train_ANET(iteration: int, simulations: int):
+def train_ANET(iteration: int, playouts: int):
     """
     Trains the ANET model and saves the model to saved_models folder.
     Returns the trained model and the differnte trained versions of the model.
@@ -83,7 +83,7 @@ def train_ANET(iteration: int, simulations: int):
         print(f"Iteration: {i + 1} of {config.EPISODES}")
         GameData.clear_data_file()
         generate_test_data(
-            root, iteration, simulations, model
+            root, iteration, playouts, model
         )  # TODO Model not defined in train_ANET
         updateDatasetAndLoad()
         train_on_data()
@@ -93,7 +93,7 @@ def train_ANET(iteration: int, simulations: int):
         if i % (config.EPISODES // (config.M - 1)) == 0 or (i == (config.EPISODES - 1)):
             # if i % (config.episodes // (config.M - 2)) == 0:
             print("[INFO] Saving model...")
-            model.save_model(i, simulations, config.NUM_RESIDUAL_BLOCKS, config.NUM_FILTERS)
+            model.save_model(i, playouts, config.NUM_RESIDUAL_BLOCKS, config.NUM_FILTERS)
             batch_model = copy.deepcopy(model)
             cached_models.append(batch_model)
             print("[INFO] Model saved!")
