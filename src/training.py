@@ -50,16 +50,14 @@ criterion = nn.CrossEntropyLoss()  # Finnes ulike CrossEntropyLoss - Sjekk ut de
 optimizer = torch.optim.SGD(model.parameters(), lr=config.LEARNING_RATE)
 
 
-def train_on_data(game: StateHandler):
+def train_on_data():
     for i, (features, labels) in enumerate(train_loader):
         features = features.to(config.DEVICE)
         labels = labels.to(config.DEVICE)
 
-        print(f"features.shape = {features.shape}")
         # forward pass
-        
-        output = model(transform_2d_to_tensor(game, features))
-        loss = criterion(output, labels)
+        output = model(transform_2d_to_tensor(features=features))
+        loss = criterion(output[0], labels)
 
         # backward
         optimizer.zero_grad()
@@ -68,10 +66,8 @@ def train_on_data(game: StateHandler):
 
         # print status
         if (i + 1) % 1 == 0:
-            pass
-
-    print(f"loss = {loss.item(): .4f}")
-    config.epsilon *= config.epsilon_decay
+            print(f"loss = {loss.item(): .4f}")
+    config.EPSILON *= config.EPSILON_DECAY
 
 
 def train_ANET(iteration: int, simulations: int):
@@ -91,14 +87,14 @@ def train_ANET(iteration: int, simulations: int):
             root, iteration, simulations, model
         )  # TODO Model not defined in train_ANET
         updateDatasetAndLoad()
-        train_on_data(root.get_state())
+        train_on_data()
         # with torch.no_grad():
         # testModel(model)
 
         if i % (config.EPISODES // (config.M - 1)) == 0 or (i == (config.EPISODES - 1)):
             # if i % (config.episodes // (config.M - 2)) == 0:
             print("[INFO] Saving model...")
-            model.saveModel(i, simulations)
+            model.save_model(i, simulations, config.NUM_RESIDUAL_BLOCKS, config.NUM_FILTERS)
             batch_model = copy.deepcopy(model)
             cached_models.append(batch_model)
             print("[INFO] Model saved!")
@@ -129,20 +125,6 @@ def main():
 
 
 if __name__ == "__main__":
-    """
-    model = NeuralNet(50, 128, 49)
-    trained_model = NeuralNet.loadModel(
-        model, 7, 100, 500).to(get_default_config.DEVICE())
-
-    test_case = torch.Tensor([1, 0, -1, 1, 0]).to(get_default_config.DEVICE())
-
-    result = trained_model(test_case)
-
-    print("Test case 2: " + str(result))
-
-
-    """
-
     cProfile.run("main()", "output.dat")
 
     with open("output_time.txt", "w") as f:

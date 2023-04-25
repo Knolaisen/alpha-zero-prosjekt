@@ -19,7 +19,7 @@ print()
 # print("[INFO] Running TOPP with loaded models...")
 # tournament: TOPP = TOPP(loaded_models)
 # # Run TOPP
-tournament.play_tournament()
+# tournament.play_tournament()
 
 print()
 user_input = input("Do you wanna play the best model? Press [enter] to continue")

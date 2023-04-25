@@ -7,7 +7,7 @@ import config as config
 from state import StateHandler
 
 class NeuralNet(nn.Module):
-    def __init__(self, num_residual_blocks=config.NUM_RESIDUAL_BLOCKS, num_filters=config.NUM_FILTERS):
+    def __init__(self, num_residual_blocks=config.NUM_RESIDUAL_BLOCKS, num_filters=config.NUM_FILTERS, module_iterations_trained:int= None):
         super(NeuralNet, self).__init__()
 
         self.input_conv = nn.Sequential(
@@ -37,6 +37,9 @@ class NeuralNet(nn.Module):
             nn.Linear(256, 1),
             nn.Tanh()
         )
+        if module_iterations_trained is not None:
+            self.module_iterations_trained = module_iterations_trained
+        self.module_iterations_trained = "No Name"
 
     def forward(self, x: torch.Tensor):
         x = self.input_conv(x)
@@ -61,11 +64,11 @@ class NeuralNet(nn.Module):
         return e_x / np.sum(e_x, axis=0)
 
     
-    def default_policy(self, game: StateHandler) -> any:
+    def default_policy(self, game: StateHandler, training: bool= False ) -> any:
         """
         Default policy finds the best move from the model, but with a chance of random move to explore the tree
         """
-        if random.random() < config.EPSILON:
+        if random.random() < config.EPSILON and training:
             # Random move
             return random.choice(game.get_legal_actions())
 
@@ -122,9 +125,10 @@ class NeuralNet(nn.Module):
             index = np.argmax(np_arr)
             return index
 
-    def save_model(self, iteration: int, simulations: int) -> None:
+    def save_model(self, iteration: int, simulations: int, num_residual_blocks: int, filters: int) -> None:
         """Save the model to a file"""
-        file_name = f"model_{iteration}_{simulations}.pt"
+        file_name = f"model_itr_{iteration}_sim_{simulations}_nres_{num_residual_blocks}_fltr_{filters}.pt"
+        self.module_iterations_trained = iteration
         torch.save(self.state_dict(), f"{config.MODEL_PATH}/{file_name}")
 
     @staticmethod
@@ -134,11 +138,8 @@ class NeuralNet(nn.Module):
         model = NeuralNet(config.INPUT_SIZE, config.HIDDEN_SIZE, config.OUTPUT_SIZE)
 
         loaded_model: "NeuralNet"= torch.load(f"{config.MODEL_PATH}/{file_name}")
-
         model.load_state_dict(loaded_model.state_dict())
-
         model = model.eval()
-
         return model
 
 class ResidualBlock(nn.Module):
@@ -169,19 +170,22 @@ def transform_2d_to_tensor(game: StateHandler = None, features: np.array= None) 
     '''
     Tranforms the board state from 2d to a tensor.
     '''
-    if features is None:
+    if features is None and game is not None:
         features = game.get_board_state()
-    features = features.flatten()
+        features = features.flatten()
 
-    player_id = game.get_current_player()
-    # Add player as first place in array
-    features = np.insert(features, 0, player_id)
+        player_id = game.get_current_player()
+        # Add player as first place in array
+        features = np.insert(features, 0, player_id)
+
+    else:
+        features = features.flatten()
 
     # Add player to 
     array_3d = np.stack([features] * config.INPUT_SIZE, axis=0)
     array_4d = array_3d.reshape(1, config.INPUT_SIZE, config.INPUT_SIZE, 1)
     # Convert the 4D NumPy array to a PyTorch tensor:
-    input_tensor = torch.from_numpy(array_4d).float()
+    input_tensor = (torch.from_numpy(array_4d).float())
     return input_tensor
 
 if __name__ == "__main__":
@@ -201,5 +205,5 @@ if __name__ == "__main__":
     # Create an instance of the NeuralNet class and pass the input tensor to it:
     model = NeuralNet()
     output = model(input_tensor)
-    print(output)
+    print(output.item())
 

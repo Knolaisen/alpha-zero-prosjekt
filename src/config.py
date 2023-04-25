@@ -6,16 +6,17 @@ import numpy as np
 
 # ============== Training  parameters ==============
 G = 2  # Number of games between opponents in TOPP
-M = 5  # Number of model versions to cache 
-EPISODES = 20  # Number of episodes to train ANET for 
+M = 2  # Number of model versions to cache 
+EPISODES = 2  # Number of episodes to train ANET for 
 LEARNING_RATE = 0.05  # Learning rate | AlphaZero used: 0.0002
-MCTS_SIMULATIONS = 100  # MCTS rollout games | AlphaZero used: 800
+MCTS_SIMULATIONS = 2  # MCTS rollout games | AlphaZero used: 800
 MCTS_GAMES = 1  # Number of MCTS games to play | AlphaZero used: 44 000 000
 TIME_LIMIT = 10  # Time limit for MCTS | AlphaZero used: 0.0040 seconds
 BATCH_SIZE = 32  # Batch size for training | AlphaZero used: 700 000
 NUM_EPOCHS = 10  # Number of epochs to train for
-EPSILON = 0.3 # Epsilon for epsilon greedy
-SIGMA = 0.25 # Sigma for noise
+EPSILON = 0.3 # Epsilon for 
+EPSILON_DECAY = 0.999 # Epsilon decay 
+SIGMA = 0.25 # Sigma for how likely it is to choose a random move
 
 # ============= Validate Training params =============
 for i in range(EPISODES):
@@ -31,20 +32,10 @@ for i in range(EPISODES):
 DEVICE: torch.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # ====================== Paths =======================
-
 MCTS_DATA_PATH = "./saved_mcts"# Path to the folder containing the data
 MODEL_PATH = "./saved_models"# Path to the folder containing the models
 
-
-
-# ===================== Neural Network settings =====================
-
-INPUT_SIZE = 8*8 + 1 # Input size
-OUTPUT_SIZE = 63*64  # Output siz
-
-NUM_RESIDUAL_BLOCKS = 19 # Number of residual blocks in the neural network
-NUM_FILTERS = 256 # Number of filters in the residual blocks 
-# ====================== Chess Values =======================
+# ================== Chess Values ====================
 MAX_TURNS = 100  # Max number of turns in a game
 
 def get_all_possible_moves():
@@ -71,4 +62,10 @@ def get_all_possible_moves():
     allmoves = allmoves[~mask].reshape(64, 63)
     return allmoves.flatten()
 ALL_POSSIBLE_MOVES = np.asarray(get_all_possible_moves())
-    
+
+# ===================== Neural Network settings =====================
+INPUT_SIZE = 8*8 + 1 # Input size
+OUTPUT_SIZE = len(ALL_POSSIBLE_MOVES) # Output siz 63*64 
+
+NUM_RESIDUAL_BLOCKS = 19 # Number of residual blocks in the neural network
+NUM_FILTERS = 256 # Number of filters in the residual blocks 

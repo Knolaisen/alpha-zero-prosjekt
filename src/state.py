@@ -74,3 +74,9 @@ class StateHandler(ABC):
         Get the current player
         """
         pass
+    @abstractmethod
+    def render(self) -> None:
+        """
+        Render the game state
+        """
+        pass

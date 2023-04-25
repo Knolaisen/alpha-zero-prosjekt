@@ -25,6 +25,7 @@ class TOPP:
             opponent: NeuralNet
             for opponent in self.models[i + 1 :]:
                 self.play_chess_games(modelOne, opponent)
+        self.print_results()
 
 
     def play_chess_games(self, modelOne: NeuralNet, modelTwo: NeuralNet) -> None:
@@ -32,7 +33,7 @@ class TOPP:
         Play a game of Hex between two models
         """
         for game_nr in range(self.number_of_games):
-            print(f"Game {game_nr} between {modelOne} and {modelTwo}")
+            print(f"Game {game_nr} between model_{modelOne.module_iterations_trained} and model_{modelTwo.module_iterations_trained}")
             start_player = 1
             self._play_game(start_player, modelOne, modelTwo)
             
@@ -45,15 +46,15 @@ class TOPP:
         """
         Play a game of Hex between two models and update the statistics
         """
-        board = ChessStateHandler(self.board_size, start_player)
+        board = ChessStateHandler()
         while not board.is_finished():
             player: float = board.get_current_player()
 
             move: tuple[int, int]
             if player == start_player:
-                move = modelOne.defaultPolicy(board, modelOne, 0)
+                move = modelOne.default_policy(board)
             else:
-                move = modelTwo.defaultPolicy(board, modelTwo, 0)
+                move = modelTwo.default_policy(board)
             board.step(move)
 
         winner = board.get_winner()
@@ -62,7 +63,38 @@ class TOPP:
         else:
             self.statistics[modelTwo] += 1
 
+    def play_vs_bot(self):
+        model = self.models[-1]
+        game = ChessStateHandler()
+
+        while not game.is_finished():
+            game.render()
+            current_player = game.get_current_player()
+            if current_player == 1:
+                user_move = self.user_input()
+                game.step(user_move)
+
+            else:
+                move = model.default_policy(game)
+                game.step(move)
+        game.render()
+        winner = game.get_winner()
+        if winner == 1:
+            print("Congratulations, you won!")
+        else:
+            print("You lost to the bot!")
+
+    def user_input(self) -> str:
+        while True:
+            user_input = input("Your turn to place move: Example (a1a2) ")
+            return user_input
 
     def get_results(self) -> dict[NeuralNet, int]:
         return self.statistics
+    
+    def print_results(self):
+        for i in range(len(self.models)):
+            print(
+                f"Model_{self.models[i].module_iterations_trained} won {self.statistics.get(self.models[i])} times"
+            )
 
