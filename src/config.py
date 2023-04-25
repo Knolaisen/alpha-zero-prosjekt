@@ -9,7 +9,7 @@ G = 2  # Number of games between opponents in TOPP
 M = 2  # Number of model versions to cache 
 EPISODES = 2  # Number of episodes to train ANET for 
 LEARNING_RATE = 0.05  # Learning rate | AlphaZero used: 0.0002
-MCTS_SIMULATIONS = 50  # MCTS rollout games | AlphaZero used: 800
+MCTS_SIMULATIONS = 1  # MCTS rollout games | AlphaZero used: 800
 MCTS_GAMES = 1  # Number of MCTS games to play | AlphaZero used: 44 000 000
 TIME_LIMIT = 10  # Time limit for MCTS | AlphaZero used: 0.0040 seconds
 BATCH_SIZE = 32  # Batch size for training | AlphaZero used: 700 000
@@ -22,7 +22,7 @@ for i in range(EPISODES):
         (i % (EPISODES // (M - 1)) == 0 or (i == (EPISODES - 1)))
     except ZeroDivisionError as e:
         print("[ERROR] Number of episodes must be divisible by (M - 1) or (EPISODES - 1)")
-        print("[HINT]  Models must be lower than the number of episodes")
+        print("[HINT] Models must be lower than the number of episodes")
         print("[TERMINATING] Please change the value of EPISODES or M")
         exit()
 # ================= Hardwaresettings =================

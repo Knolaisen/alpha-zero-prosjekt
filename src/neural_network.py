@@ -179,7 +179,7 @@ def transform_2d_to_tensor(game: StateHandler = None, features: np.array= None) 
     array_3d = np.stack([features] * config.INPUT_SIZE, axis=0)
     array_4d = array_3d.reshape(1, config.INPUT_SIZE, config.INPUT_SIZE, 1)
     # Convert the 4D NumPy array to a PyTorch tensor:
-    input_tensor = (torch.from_numpy(array_4d).float())
+    input_tensor = (torch.from_numpy(array_4d).float().to(config.DEVICE))
     return input_tensor
 
 if __name__ == "__main__":
