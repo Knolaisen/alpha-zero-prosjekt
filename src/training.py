@@ -67,7 +67,6 @@ def train_on_data():
         # print status
         if (i + 1) % 1 == 0:
             print(f"loss = {loss.item(): .4f}")
-    config.EPSILON *= config.EPSILON_DECAY
 
 
 def train_ANET(iteration: int, simulations: int):

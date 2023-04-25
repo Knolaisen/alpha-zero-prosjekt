@@ -9,19 +9,16 @@ G = 2  # Number of games between opponents in TOPP
 M = 2  # Number of model versions to cache 
 EPISODES = 2  # Number of episodes to train ANET for 
 LEARNING_RATE = 0.05  # Learning rate | AlphaZero used: 0.0002
-MCTS_SIMULATIONS = 2  # MCTS rollout games | AlphaZero used: 800
+MCTS_SIMULATIONS = 50  # MCTS rollout games | AlphaZero used: 800
 MCTS_GAMES = 1  # Number of MCTS games to play | AlphaZero used: 44 000 000
 TIME_LIMIT = 10  # Time limit for MCTS | AlphaZero used: 0.0040 seconds
 BATCH_SIZE = 32  # Batch size for training | AlphaZero used: 700 000
 NUM_EPOCHS = 10  # Number of epochs to train for
-EPSILON = 0.3 # Epsilon for 
-EPSILON_DECAY = 0.999 # Epsilon decay 
-SIGMA = 0.25 # Sigma for how likely it is to choose a random move
+SIGMA = 0.01 # Sigma for how likely it is to predict the winner from value head
 
 # ============= Validate Training params =============
 for i in range(EPISODES):
     try:
-
         (i % (EPISODES // (M - 1)) == 0 or (i == (EPISODES - 1)))
     except ZeroDivisionError as e:
         print("[ERROR] Number of episodes must be divisible by (M - 1) or (EPISODES - 1)")

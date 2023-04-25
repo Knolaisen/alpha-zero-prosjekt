@@ -66,21 +66,15 @@ class NeuralNet(nn.Module):
     
     def default_policy(self, game: StateHandler, training: bool= False ) -> any:
         """
-        Default policy finds the best move from the model, but with a chance of random move to explore the tree
+        Default policy finds the best move from the model
         """
-        if random.random() < config.EPSILON and training:
-            # Random move
-            return random.choice(game.get_legal_actions())
-
         state = game.get_board_state()
-
         state = state.flatten()
         # Add the turn indicator
         state = np.insert(state, 0, game.get_current_player())
         
         # state: torch.Tensor = torch.from_numpy(state).float().to(config.DEVICE)
         state: torch.Tensor = transform_2d_to_tensor(game).to(config.DEVICE)
-
 
         # print("State: ", state)
         # Find the correct move from the legal games and return it
