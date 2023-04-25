@@ -1,8 +1,5 @@
 import torch
 import numpy as np
-# ================= Configurations =================
-
-
 
 # ============== Training  parameters ==============
 G = 2  # Number of games between opponents in TOPP
@@ -22,7 +19,7 @@ for i in range(EPISODES):
         (i % (EPISODES // (M - 1)) == 0 or (i == (EPISODES - 1)))
     except ZeroDivisionError as e:
         print("[ERROR] Number of episodes must be divisible by (M - 1) or (EPISODES - 1)")
-        print("[HINT]  Models must be lower than the number of episodes")
+        print("[HINT] Models must be lower than the number of episodes")
         print("[TERMINATING] Please change the value of EPISODES or M")
         exit()
 # ================= Hardwaresettings =================
@@ -64,5 +61,5 @@ ALL_POSSIBLE_MOVES = np.asarray(get_all_possible_moves())
 INPUT_SIZE = 8*8 + 1 # Input size
 OUTPUT_SIZE = len(ALL_POSSIBLE_MOVES) # Output siz 63*64 
 
-NUM_RESIDUAL_BLOCKS = 19 # Number of residual blocks in the neural network
+NUM_RESIDUAL_BLOCKS = 3 # Number of residual blocks in the neural network | Ph.D 3 | AlphaZero 20
 NUM_FILTERS = 256 # Number of filters in the residual blocks 
