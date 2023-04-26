@@ -16,6 +16,7 @@ def visualize(board):
     GREEN = (0, 255, 0)
     # Main game loop
     selected_square = None
+    move_square = None
     running = True
     while running:
         for event in pygame.event.get():
@@ -27,16 +28,19 @@ def visualize(board):
                 # Convert the pixel coordinates to chess square coordinates
                 file = int(x / (WINDOW_SIZE[0] / 8))
                 rank = int((WINDOW_SIZE[1] - y) / (WINDOW_SIZE[1] / 8))
-                square = chess.square(file, rank)
+                
 
                 #implement such that second 
-                if (selected_square==square):
-                    pass
-                
-                # Set the selected square to the clicked square
-                selected_square = square
-                # Print the square that was clicked
-                print(f"You clicked on square {chess.square_name(square)}")
+                if (selected_square!=None):
+                    move_square = chess.square(file,rank)
+                    print(f"move from square {chess.square_name(square)} to square {chess.square_name(move_square)} ")
+                else: 
+                    square = chess.square(file, rank)
+                    # Set the selected square to the clicked square
+                    selected_square = square
+                    move_square = None
+                    # Print the square that was clicked
+                    print(f"You clicked on square {chess.square_name(square)}")
         # Draw the board on the screen
         for file in range(8):
             for rank in range(8):
@@ -51,8 +55,13 @@ def visualize(board):
                 # If the square is selected, highlight it in red
                 if selected_square == square:
                     square_color = RED
+                    
+                elif move_square == square:
+                    square_color = GREEN
+                    selected_square = None
                 # Draw the square on the screen
                 pygame.draw.rect(screen, square_color, pygame.Rect(file * 100, (7 - rank) * 100, 100, 100))
+                
                 # Draw the piece on the square, if there is one
                 if piece is not None:
                     if piece.color == chess.WHITE:
