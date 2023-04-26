@@ -94,7 +94,6 @@ def train_ANET(iteration: int, rounds: int):
     cached_models = []
     for i in range(config.EPISODES):
         print(f"Iteration: {i + 1} of {config.EPISODES}")
-        GameData.clear_data_file()
         generate_test_data(
             root, iteration, rounds, model
         )  # TODO Model not defined in train_ANET

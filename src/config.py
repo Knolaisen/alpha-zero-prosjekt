@@ -26,8 +26,11 @@ for i in range(EPISODES):
 DEVICE: torch.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 # ====================== Paths =======================
-MCTS_DATA_PATH = "./alpha-zero-prosjekt/src/saved_mcts"# Path to the folder containing the data
-MODEL_PATH = "./alpha-zero-prosjekt/src/saved_models"# Path to the folder containing the models
+MCTS_DATA_PATH = "./saved_mcts"# Path to the folder containing the data
+MODEL_PATH = "./saved_models"# Path to the folder containing the models
+
+# ====================== Replay Buffer =======================
+REPLAY_BUFFER_MAX_SIZE = 25  # Size of the replay buffer
 
 # ================== Chess Values ====================
 MAX_TURNS = 100  # Max number of turns in a game
@@ -56,7 +59,7 @@ def get_all_possible_moves():
     allmoves = allmoves[~mask].reshape(64, 63)
     return allmoves.flatten()
 ALL_POSSIBLE_MOVES = np.asarray(get_all_possible_moves())
-
+GAME_START_STATE = "1.,-4.,-2.,-3.,-5.,-6.,-3.,-2.,-4.,-1.,-1.,-1.,-1.,-1.,-1.,-1.,-1.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,1.,1.,1.,1.,1.,1.,1.,1.,4.,2.,3.,5.,6.,3.,2.,4."
 # ===================== Neural Network settings =====================
 INPUT_SIZE = 8*8 + 1 # Input size
 OUTPUT_SIZE = len(ALL_POSSIBLE_MOVES) # Output siz 63*64 

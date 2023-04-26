@@ -235,7 +235,6 @@ def generate_test_data(start_node: Node, num_games: int, rounds: int, model: Neu
     # start_node = start_node
     
     for game_iteration in range(num_games):
-        GameData.clear_data_file()
         root = Node(start_node.get_state())
         game: StateHandler = root.get_state() # Initialize the actual game board (B_a) to an empty board
         print("Iteration: " + str(game_iteration+1))
@@ -254,7 +253,7 @@ def generate_test_data(start_node: Node, num_games: int, rounds: int, model: Neu
             distribution = get_action_probabilities(root)
             distribution = np.asarray(distribution, dtype=np.float32)
             # print("state: " + str(state) + " distribution: " + str(distribution))
-            GameData.add_data(state, distribution)
+            GameData.add_data_to_replay_buffer(state, distribution)
             
             # Choose actual move (a*) based on distribution
             best_move_root: Node = get_best_action(root)

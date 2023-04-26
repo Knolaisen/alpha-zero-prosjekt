@@ -44,11 +44,48 @@ class GameData(Dataset):
             f.truncate()
 
     @staticmethod
-    def add_data(game_state: np.ndarray, distribution: np.array) -> None:
+    def add_data_to_replay_buffer(game_state: np.ndarray, distribution: np.array) -> None:
         """
-        Tar inn np array og lagrer tilstand til brettet 
-        Adds more data saved file 
+        Adds more data saved file
+        """
 
+        GameData._add_data(game_state, distribution)
+
+        with open(file_name, "r+") as f:
+            try:
+                game_states = f.readlines()
+            except:
+                game_states = []
+
+            amount_of_games, game_indices = GameData._count_games_and_indices(game_states)
+            if amount_of_games > config.REPLAY_BUFFER_MAX_SIZE:
+                # Remove the oldest game
+                games_to_remove = amount_of_games - config.REPLAY_BUFFER_MAX_SIZE
+                # -1  for zero index and another for the line before
+                offset = game_indices[games_to_remove] - 2
+                game_states = game_states[offset:]
+                f.truncate(0)
+                f.seek(0)
+                f.writelines(game_states)
+
+    @staticmethod
+    def _count_games_and_indices(game_states) -> "int, list(int)":
+        amount_of_games = 0
+        game_start_indices = []
+        current_index = 0
+
+        game_state: str
+        for game_state in game_states:
+            if game_state.startswith(config.GAME_START_STATE):
+                amount_of_games += 1
+                game_start_indices.append(current_index)
+            current_index += 1
+        return amount_of_games, game_start_indices
+    
+    @staticmethod
+    def _add_data(game_state: np.ndarray, distribution: np.array) -> None:
+        """
+        Adds the game state and distribution to the data file. All data is saved as a string in one line.
         """
         
         game_state.flatten()
@@ -114,7 +151,7 @@ if __name__ == "__main__":
     # board_state = "1.0,0.0,-1.0,-1.0:0.0,1.0,0.0,0.0"
 
     # print("======= ADD DATA =======")
-    # # GameData.add_data(features, label)
+    # # GameData._add_data(features, label)
 
     # print("======= ENCODE =======")
     # print(GameData._encode(features, label))
@@ -124,5 +161,5 @@ if __name__ == "__main__":
     # print(GameData._decode("-1, 0,-1,1,0:1.,0.,0.,0.,0."))
 
     # data = np.array(yourlist, dtype=np.float32)
-    # GameData.add_data(data)
+    # GameData._add_data(data)
     GameData.clear_data_file()
