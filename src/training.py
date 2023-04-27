@@ -25,7 +25,7 @@ train_loader: DataLoader
 test_loader: DataLoader
 
 
-def updateDatasetAndLoad():
+def update_dataset_and_load():
     """
     Updates the data file with the new data
     """
@@ -60,8 +60,9 @@ optimizer = torch.optim.SGD(model.parameters(), lr=config.LEARNING_RATE)
 
 def train_on_data():
     '''
-    
+    Trains the model on the data in the data file 
     '''
+
     for i, (features, labels) in enumerate(train_loader):
         features = features.to(config.DEVICE)
         labels = labels.to(config.DEVICE)
@@ -97,7 +98,7 @@ def train_ANET(iteration: int, rounds: int):
         generate_test_data(
             root, iteration, rounds, model
         )  # TODO Model not defined in train_ANET
-        updateDatasetAndLoad()
+        update_dataset_and_load()
         train_on_data()
         # with torch.no_grad():
         # testModel(model)
