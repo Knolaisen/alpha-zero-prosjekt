@@ -48,11 +48,13 @@ model = NeuralNet().to(config.DEVICE)
 policy_loss = nn.CrossEntropyLoss()
 value_loss = nn.MSELoss()
 
-def alpha_zero_loss(policy_pred, MCTS_policy_prob, value_pred, MCTS_value):
-   return policy_loss(policy_pred, MCTS_policy_prob) + value_loss (value_pred, MCTS_value)
+def alpha_zero_loss(policy_pred: torch.Tensor, MCTS_policy_prob: torch.Tensor, value_pred: torch.Tensor, MCTS_value: torch.Tensor):
+#    print("policy_pred: ", policy_pred, "MCTS_policy_prob: ", MCTS_policy_prob, "value_pred: ", value_pred, "MCTS_value: ", MCTS_value)
+    # print("policy_pred: ", policy_pred.shape, "MCTS_policy_prob: ", MCTS_policy_prob.shape, "value_pred: ", value_pred.shape, "MCTS_value: ", MCTS_value.shape)
+    return policy_loss(policy_pred, MCTS_policy_prob) + value_loss(value_pred, MCTS_value[0])
 
 
-criterion = nn.CrossEntropyLoss()  # Finnes ulike CrossEntropyLoss - Sjekk ut det
+# criterion = nn.CrossEntropyLoss()  # Finnes ulike CrossEntropyLoss - Sjekk ut det
 # There are many options of optimizers: Adagrad, Stochastic Gradient Descent (SGD), RMSProp, and Adam.
 # We should try out different optimizers and see which one works best.
 optimizer = torch.optim.SGD(model.parameters(), lr=config.LEARNING_RATE)
@@ -62,15 +64,18 @@ def train_on_data():
     '''
     Trains the model on the data in the data file 
     '''
-
-    for i, (features, labels) in enumerate(train_loader):
+    for epoch, (features, labels, expected_outcome_probability) in enumerate(train_loader):
         features = features.to(config.DEVICE)
         labels = labels.to(config.DEVICE)
 
         # forward pass
-        output = model(transform_2d_to_tensor(features=features))
-        #loss = alpha_zero_loss(output[0], features, output[1], labels)
-        loss = criterion(output[0], labels)
+        MCTS_policy_prob, MCTS_value = model(transform_2d_to_tensor(features=features))
+
+        # loss = alpha_zero_loss(MCTS_policy_prob, features, MCTS_value, )¨
+        # print("expected_outcome_probability: " + str(expected_outcome_probability) + " MCTS_value: " + str(MCTS_value))
+        loss = alpha_zero_loss(labels, MCTS_policy_prob, expected_outcome_probability, MCTS_value)
+
+        # loss = criterion(output[0], labels)
 
         # backward
         optimizer.zero_grad()
@@ -78,15 +83,14 @@ def train_on_data():
         loss.backward()
         optimizer.step()
 
-        # print status
-        if (i + 1) % 1 == 0:
-            print(f"loss = {loss.item(): .4f}")
+    print(f"{epoch} loss = {loss.item(): .4f}")
+
 
 
 def train_ANET(iteration: int, rounds: int):
     """
     Trains the ANET model and saves the model to saved_models folder.
-    Returns the trained model and the differnte trained versions of the model.
+    Returns models cached during training.
     """
     print("[DEVICE]: " + str(config.DEVICE))
     game = ChessStateHandler()
@@ -95,10 +99,9 @@ def train_ANET(iteration: int, rounds: int):
     cached_models = []
     for i in range(config.EPISODES):
         print(f"Iteration: {i + 1} of {config.EPISODES}")
-        generate_test_data(
-            root, iteration, rounds, model
-        )  # TODO Model not defined in train_ANET
+        generate_test_data(root, iteration, rounds, model) 
         update_dataset_and_load()
+        
         train_on_data()
         # with torch.no_grad():
         # testModel(model)
@@ -137,13 +140,17 @@ def main():
 
 
 if __name__ == "__main__":
-    cProfile.run("main()", "output.dat")
+    # cProfile.run("main()", "output.dat")
 
-    with open("output_time.txt", "w") as f:
-        p = pstats.Stats("output.dat", stream=f)
-        p.sort_stats("time").print_stats()
+    # with open("output_time.txt", "w") as f:
+    #     p = pstats.Stats("output.dat", stream=f)
+    #     p.sort_stats("time").print_stats()
 
-    with open("output_calls.txt", "w") as f:
-        p = pstats.Stats("output.dat", stream=f)
-        p.sort_stats("calls").print_stats()
+    # with open("output_calls.txt", "w") as f:
+    #     p = pstats.Stats("output.dat", stream=f)
+    #     p.sort_stats("calls").print_stats()
 
+
+    # 
+    update_dataset_and_load()
+    train_on_data()

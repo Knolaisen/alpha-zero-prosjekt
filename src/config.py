@@ -5,29 +5,27 @@ import numpy as np
 G = 2  # Number of games between opponents in TOPP
 M = 2  # Number of model versions to cache 
 EPISODES = 2  # Number of episodes to train ANET for 
-LEARNING_RATE = 0.05  # Learning rate | AlphaZero used: 0.0002
-MCTS_ROUNDS = 250  # MCTS rollout games | AlphaZero used: 800
+LEARNING_RATE = 0.5  # Learning rate | AlphaZero used: 0.0002
+MCTS_ROUNDS = 1  # MCTS rollout games | AlphaZero used: 800
 MCTS_GAMES = 1  # Number of MCTS games to play | AlphaZero used: 44 000 000
 TIME_LIMIT = 10  # Time limit for MCTS | AlphaZero used: 0.0040 seconds
 BATCH_SIZE = 32  # Batch size for training | AlphaZero used: 700 000
 NUM_EPOCHS = 10  # Number of epochs to train for
 SIGMA = 0.01 # Sigma for how likely it is to predict the winner from value head
 
-# ============= Validate Training params =============
-for i in range(EPISODES):
-    try:
-        (i % (EPISODES // (M - 1)) == 0 or (i == (EPISODES - 1)))
-    except ZeroDivisionError as e:
-        print("[ERROR] Number of episodes must be divisible by (M - 1) or (EPISODES - 1)")
-        print("[HINT] Models must be lower than the number of episodes")
-        print("[TERMINATING] Please change the value of EPISODES or M")
-        exit()
 # ================= Hardwaresettings =================
-DEVICE: torch.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+DEVICE: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # ====================== Paths =======================
+MCTS_PERSONAL_DATA_FILE = "data_file.csv"  # Name of the file containing the data
+MCTS_MAIN_DATA_FILE = "main_data_file.csv"  # Name of the file containing the data
+
 MCTS_DATA_PATH = "./saved_mcts"# Path to the folder containing the data
 MODEL_PATH = "./saved_models"# Path to the folder containing the models
+
+# FILENAMES
+PERSONAL_FILE_NAME = MCTS_DATA_PATH + "/" + MCTS_PERSONAL_DATA_FILE # Name of the file containing the data
+MAIN_FILE_NAME = MCTS_DATA_PATH + "/" + MCTS_MAIN_DATA_FILE # Name of the file containing the data
 
 # ====================== Replay Buffer =======================
 REPLAY_BUFFER_MAX_SIZE = 25  # Size of the replay buffer
@@ -60,9 +58,23 @@ def get_all_possible_moves():
     return allmoves.flatten()
 ALL_POSSIBLE_MOVES = np.asarray(get_all_possible_moves())
 GAME_START_STATE = "1.,-4.,-2.,-3.,-5.,-6.,-3.,-2.,-4.,-1.,-1.,-1.,-1.,-1.,-1.,-1.,-1.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,1.,1.,1.,1.,1.,1.,1.,1.,4.,2.,3.,5.,6.,3.,2.,4."
+
 # ===================== Neural Network settings =====================
 INPUT_SIZE = 8*8 + 1 # Input size
 OUTPUT_SIZE = len(ALL_POSSIBLE_MOVES) # Output siz 63*64 
 
 NUM_RESIDUAL_BLOCKS = 3 # Number of residual blocks in the neural network | Ph.D 3 | AlphaZero 20
 NUM_FILTERS = 256 # Number of filters in the residual blocks 
+
+
+
+
+# ============= Validate Training params =============
+for i in range(EPISODES):
+    try:
+        (i % (EPISODES // (M - 1)) == 0 or (i == (EPISODES - 1)))
+    except ZeroDivisionError as e:
+        print("[ERROR] Number of episodes must be divisible by (M - 1) or (EPISODES - 1)")
+        print("[HINT] Models must be lower than the number of episodes")
+        print("[TERMINATING] Please change the value of EPISODES or M")
+        exit()

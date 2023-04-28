@@ -253,7 +253,11 @@ def generate_test_data(start_node: Node, num_games: int, rounds: int, model: Neu
             distribution = get_action_probabilities(root)
             distribution = np.asarray(distribution, dtype=np.float32)
             # print("state: " + str(state) + " distribution: " + str(distribution))
-            GameData.add_data_to_replay_buffer(state, distribution)
+
+            # Find expected outcome probability
+            expected_outcome_probability = root.calculate_value()
+
+            GameData.add_data_to_replay_buffer(state, distribution, expected_outcome_probability)
             
             # Choose actual move (a*) based on distribution
             best_move_root: Node = get_best_action(root)
