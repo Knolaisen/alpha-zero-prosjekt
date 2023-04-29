@@ -159,7 +159,7 @@ class GameData(Dataset):
         game_state.flatten()
         formatted_data: str = GameData._encode(game_state, distribution, expected_outcome_probability)
 
-        with open(config.PERSONAL_FILE_NAME, "a") as f:
+        with open(config.PERSONAL_FILE_NAME, "a+") as f:
             f.write(formatted_data + "\n")
 
     @staticmethod
