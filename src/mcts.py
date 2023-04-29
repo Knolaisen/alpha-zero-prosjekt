@@ -14,7 +14,7 @@ from game_data import GameData
 import sys
 
 
-def monte_carlo_tree_search(root: Node, state_handler: StateHandler, sigma: float, policy: NeuralNet =None, max_itr=0, max_time=0) -> Node:
+def monte_carlo_tree_search(root: Node, policy: NeuralNet =None, max_itr=0, max_time=0) -> Node:
     """
     Runs the monte carlo tree search algorithm.
     If max_itr is 0, it will run until max_time is reached, else it will run for max_itr iterations.
@@ -242,7 +242,7 @@ def generate_test_data(start_node: Node, num_games: int, rounds: int, model: Neu
         print("")
         
         while not game.is_finished() and root != None:
-            monte_carlo_tree_search(root, game, config.SIGMA, model, rounds) 
+            monte_carlo_tree_search(root, model, rounds) 
             player = game.get_current_player()
 
             state = root.get_state().get_board_state()
