@@ -49,8 +49,6 @@ policy_loss = nn.CrossEntropyLoss()
 value_loss = nn.MSELoss()
 
 def alpha_zero_loss(policy_pred: torch.Tensor, MCTS_policy_prob: torch.Tensor, value_pred: torch.Tensor, MCTS_value: torch.Tensor):
-#    print("policy_pred: ", policy_pred, "MCTS_policy_prob: ", MCTS_policy_prob, "value_pred: ", value_pred, "MCTS_value: ", MCTS_value)
-    # print("policy_pred: ", policy_pred.shape, "MCTS_policy_prob: ", MCTS_policy_prob.shape, "value_pred: ", value_pred.shape, "MCTS_value: ", MCTS_value.shape)
     return policy_loss(policy_pred, MCTS_policy_prob) + value_loss(value_pred, MCTS_value[0])
 
 
@@ -71,19 +69,15 @@ def train_on_data():
         # forward pass
         MCTS_policy_prob, MCTS_value = model(transform_2d_to_tensor(features=features))
 
-        # loss = alpha_zero_loss(MCTS_policy_prob, features, MCTS_value, )¨
-        # print("expected_outcome_probability: " + str(expected_outcome_probability) + " MCTS_value: " + str(MCTS_value))
         loss = alpha_zero_loss(labels, MCTS_policy_prob, expected_outcome_probability, MCTS_value)
-
         # loss = criterion(output[0], labels)
 
         # backward
         optimizer.zero_grad()
-        
         loss.backward()
         optimizer.step()
 
-    print(f"{epoch} loss = {loss.item(): .4f}")
+    print(f"EPOCH[{epoch}], loss = {loss.item(): .4f}")
 
 
 

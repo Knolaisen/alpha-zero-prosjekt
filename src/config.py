@@ -3,15 +3,15 @@ import numpy as np
 
 # ============== Training  parameters ==============
 G = 2  # Number of games between opponents in TOPP
-M = 2  # Number of model versions to cache 
-EPISODES = 2  # Number of episodes to train ANET for 
-LEARNING_RATE = 0.5  # Learning rate | AlphaZero used: 0.0002
-MCTS_ROUNDS = 1  # MCTS rollout games | AlphaZero used: 800
+M = 20  # Number of model versions to cache 
+EPISODES = 20  # Number of episodes to train ANET for 
+LEARNING_RATE = 0.05  # Learning rate | AlphaZero used: 0.0002
+MCTS_ROUNDS = 2000  # MCTS rollout games | AlphaZero used: 800
 MCTS_GAMES = 1  # Number of MCTS games to play | AlphaZero used: 44 000 000
-TIME_LIMIT = 10  # Time limit for MCTS | AlphaZero used: 0.0040 seconds
+TIME_LIMIT = 100  # Time limit for MCTS | AlphaZero used: 0.0040 seconds
 BATCH_SIZE = 32  # Batch size for training | AlphaZero used: 700 000
 NUM_EPOCHS = 10  # Number of epochs to train for
-SIGMA = 0.01 # Sigma for how likely it is to predict the winner from value head
+SIGMA = 0.001 # Sigma for how likely it is to predict the winner from value head
 
 # ================= Hardwaresettings =================
 DEVICE: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
