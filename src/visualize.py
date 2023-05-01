@@ -34,11 +34,16 @@ def visualize(board):
                 
 
                 #implement such that second 
-                if (selected_square!=None):
+                if (selected_square!=None ):
                     move_square = chess.square(file,rank)
                     # print(f"move from square {chess.square_name(square)} to square {chess.square_name(move_square)} ")
                     movesquare_string = str(chess.square_name(selected_square)+ chess.square_name(move_square))
-                    print(f"registered move {movesquare_string}")
+                    if(chess.Move.from_uci((movesquare_string)) in board.legal_moves):
+                        board.push_uci(movesquare_string)
+                        print(f"Registered move {movesquare_string}")
+                    else:
+                        print(f"{movesquare_string} Not a legal move")
+
                     
                 else: 
                     square = chess.square(file, rank)
@@ -104,9 +109,7 @@ def visualize(board):
     pygame.quit()
     sys.exit()
 
-board_state = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'
-board = chess.Board(board_state)
+board = chess.Board()
 
-# board.push("e2e4")
 
 visualize(board)
