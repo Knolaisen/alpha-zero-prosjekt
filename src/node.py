@@ -39,7 +39,7 @@ class Node():
         """
         return self._draws
 
-    def get_loses(self) -> int:
+    def get_losses(self) -> int:
         """
         Returns numLoses
         """
@@ -133,3 +133,14 @@ class Node():
             pass
         else:
             raise ValueError("Reward must be 1, 0 or -1")
+    
+    def calculate_value(self) -> float:
+        """
+        Calculates the value of the node
+        """
+        visits = self.get_visits()
+        if visits == 0:
+            visits = 1
+        wins = self.get_wins()
+        losses = self.get_losses()
+        return (wins-losses)/visits

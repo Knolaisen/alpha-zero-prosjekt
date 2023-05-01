@@ -14,7 +14,7 @@ from game_data import GameData
 import sys
 
 
-def monte_carlo_tree_search(root: Node, state_handler: StateHandler, sigma: float, policy: NeuralNet =None, max_itr=0, max_time=0) -> Node:
+def monte_carlo_tree_search(root: Node, policy: NeuralNet =None, max_itr=0, max_time=0) -> Node:
     """
     Runs the monte carlo tree search algorithm.
     If max_itr is 0, it will run until max_time is reached, else it will run for max_itr iterations.
@@ -235,7 +235,6 @@ def generate_test_data(start_node: Node, num_games: int, rounds: int, model: Neu
     # start_node = start_node
     
     for game_iteration in range(num_games):
-        GameData.clear_data_file()
         root = Node(start_node.get_state())
         game: StateHandler = root.get_state() # Initialize the actual game board (B_a) to an empty board
         print("Iteration: " + str(game_iteration+1))
@@ -243,7 +242,7 @@ def generate_test_data(start_node: Node, num_games: int, rounds: int, model: Neu
         print("")
         
         while not game.is_finished() and root != None:
-            monte_carlo_tree_search(root, game, config.SIGMA, model, rounds) 
+            monte_carlo_tree_search(root, model, rounds) 
             player = game.get_current_player()
 
             state = root.get_state().get_board_state()
@@ -254,7 +253,11 @@ def generate_test_data(start_node: Node, num_games: int, rounds: int, model: Neu
             distribution = get_action_probabilities(root)
             distribution = np.asarray(distribution, dtype=np.float32)
             # print("state: " + str(state) + " distribution: " + str(distribution))
-            GameData.add_data(state, distribution)
+
+            # Find expected outcome probability
+            expected_outcome_probability = root.calculate_value()
+
+            GameData.add_data_to_replay_buffer(state, distribution, expected_outcome_probability)
             
             # Choose actual move (a*) based on distribution
             best_move_root: Node = get_best_action(root)
